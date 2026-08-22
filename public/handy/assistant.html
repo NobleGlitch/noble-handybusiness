@@ -173,6 +173,8 @@ body { display: flex; flex-direction: column; min-height: 100vh; padding-bottom:
 
 <div class="topbar">
   <div class="brand">Aspen <span class="role">Assistant Console</span></div>
+  <a class="out" href="/handy/mail" style="margin-right:14px;position:relative" title="Inbox">📬 Inbox<span id="mailBadge" style="display:none;position:absolute;top:-6px;right:-8px;background:#B85450;color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:999px;min-width:16px;text-align:center"></span></a>
+  <a class="out" href="/handy/dashboard" style="margin-right:14px">Dashboard →</a>
   <a class="out" href="/handy/logout">Sign out</a>
 </div>
 
@@ -582,6 +584,18 @@ function escapeAttr(s) { return escapeHtml(s); }
 // Boot
 loadCalls();
 setInterval(loadCalls, 20000);
+</script>
+<script>
+(async function pollMail(){
+  try {
+    const r = await fetch('/handy/api/mail/unread-count');
+    const d = await r.json();
+    const b = document.getElementById('mailBadge');
+    if (b && d.ok && d.count > 0) { b.textContent = d.count; b.style.display = 'inline-block'; }
+    else if (b) { b.style.display = 'none'; }
+  } catch(e){}
+  setTimeout(pollMail, 30000);
+})();
 </script>
 </body>
 </html>

@@ -7,6 +7,7 @@ Three surfaces, one truck:
 - **Owner dashboard** — jobs, hours, customers, invoices, PDF export, quick-charge mobile flow, daily punch list, legal-tip widget, AI chat.
 - **Assistant call console** — big "PHONE RANG" button, autocomplete customer lookup, 3-action flow (log · callback · schedule), impossible-distance warnings, live call log.
 - **Customer portal** — signup, live-calendar booking with mandatory time blocks, ticket history, review submission.
+- **Team inbox (📬)** — internal mail between owner + assistant, direct-to-customer messages (locally staged; outbound email routing is v2), and quick notes-to-self. First-boot seeds a welcome message that summarizes the market value of what you're running.
 
 Runs on one Node process + one SQLite file. No external DB, no Redis, no queues. Deploy in a container in five minutes.
 

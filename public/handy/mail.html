@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>📬 Inbox — Handy</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF6EF;
+  --card:#fff;
+  --ink:#2A2622;
+  --ink-soft:#6A6560;
+  --hair:#E4DED2;
+  --orange:#B96B33;
+  --orange-lt:#E8955A;
+  --blue:#3B6E8F;
+  --sage:#6B9F72;
+  --clay:#B85450;
+  --cream:#F3EEE4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.5;height:100%}
+button{font-family:inherit;cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+.topbar{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.topbar .back{color:var(--ink-soft);font-size:14px;text-decoration:none}
+.topbar .back:hover{color:var(--orange)}
+.topbar h1{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--orange);flex:1}
+.topbar .compose{background:var(--orange);color:#fff;border:none;padding:9px 18px;border-radius:999px;font-weight:700;font-size:14px}
+.topbar .compose:hover{background:#8F4F22}
+.topbar .out{color:var(--ink-soft);font-size:14px;text-decoration:none;margin-left:14px}
+
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 55px)}
+.sidebar{background:var(--card);border-right:1px solid var(--hair);padding:16px 12px}
+.sidebar .box{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-radius:8px;color:var(--ink);font-weight:600;font-size:14px;cursor:pointer;margin-bottom:2px}
+.sidebar .box:hover{background:var(--cream)}
+.sidebar .box.on{background:var(--cream);color:var(--orange)}
+.sidebar .box .badge{background:var(--orange-lt);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;min-width:20px;text-align:center}
+.sidebar .box.on .badge{background:var(--orange)}
+
+.main{padding:20px}
+.list{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(42,38,34,0.05)}
+.list .row{padding:14px 18px;border-bottom:1px solid var(--hair);cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:baseline}
+.list .row:last-child{border-bottom:none}
+.list .row:hover{background:var(--cream)}
+.list .row.unread .sender{font-weight:700}
+.list .row.unread .subj{font-weight:700;color:var(--ink)}
+.list .row .dot{width:8px;height:8px;background:var(--orange-lt);border-radius:50%;grid-column:1;margin-top:8px}
+.list .row .dot.hidden{background:transparent}
+.list .row .body{grid-column:2;min-width:0}
+.list .row .sender{font-size:14px;color:var(--ink);margin-bottom:2px}
+.list .row .subj{font-size:14px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .row .preview{font-size:13px;color:var(--ink-soft);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .row .when{font-size:12px;color:var(--ink-soft);grid-column:3;white-space:nowrap}
+.list .empty{padding:60px 24px;text-align:center;color:var(--ink-soft)}
+
+.reader{background:var(--card);border-radius:12px;padding:28px 32px;box-shadow:0 1px 3px rgba(42,38,34,0.05)}
+.reader .hd{border-bottom:1px solid var(--hair);padding-bottom:16px;margin-bottom:20px}
+.reader h2{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--ink);line-height:1.15;margin-bottom:10px}
+.reader .meta{color:var(--ink-soft);font-size:14px}
+.reader .meta b{color:var(--ink)}
+.reader .actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.reader .actions button{background:var(--cream);border:1px solid var(--hair);color:var(--ink);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600}
+.reader .actions button:hover{background:var(--orange-lt);color:#fff;border-color:var(--orange-lt)}
+.reader .body-text{font-size:15px;line-height:1.7;color:var(--ink);white-space:pre-wrap;font-family:'Inter',sans-serif}
+
+.compose-form{background:var(--card);border-radius:12px;padding:28px 32px;box-shadow:0 1px 3px rgba(42,38,34,0.05);max-width:720px}
+.compose-form h2{font-family:'Fraunces',serif;font-size:24px;color:var(--ink);margin-bottom:20px}
+.compose-form .field{margin-bottom:16px}
+.compose-form label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px}
+.compose-form select,.compose-form input,.compose-form textarea{width:100%;padding:11px 14px;border:1.5px solid var(--hair);border-radius:8px;font-size:15px;font-family:inherit;color:var(--ink);background:var(--bg);line-height:1.5}
+.compose-form select:focus,.compose-form input:focus,.compose-form textarea:focus{outline:none;border-color:var(--blue);background:#fff}
+.compose-form textarea{min-height:200px;resize:vertical}
+.compose-form .kind-tabs{display:flex;gap:6px;margin-bottom:18px;background:var(--cream);padding:4px;border-radius:8px}
+.compose-form .kind-tabs button{flex:1;background:transparent;border:none;color:var(--ink-soft);padding:8px 12px;border-radius:6px;font-size:13px;font-weight:600}
+.compose-form .kind-tabs button.on{background:var(--card);color:var(--orange);box-shadow:0 1px 3px rgba(42,38,34,0.06)}
+.compose-form .send{background:var(--orange);color:#fff;border:none;padding:12px 28px;border-radius:999px;font-weight:700;font-size:15px}
+.compose-form .send:hover{background:#8F4F22}
+.compose-form .cancel{background:transparent;border:none;color:var(--ink-soft);padding:12px 20px;font-weight:600;font-size:14px}
+.compose-form .status{margin-top:14px;color:var(--sage);font-size:14px;font-weight:600;min-height:20px}
+.compose-form .status.err{color:var(--clay)}
+
+@media(max-width:720px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none;padding:8px 12px;border-right:none;border-bottom:1px solid var(--hair);position:sticky;top:55px;background:var(--card)}
+  .sidebar.on{display:flex;flex-wrap:wrap;gap:6px}
+  .sidebar .box{padding:8px 12px;font-size:13px;flex:1;min-width:44%;margin-bottom:0}
+  .topbar h1{font-size:18px}
+  .topbar .compose{padding:8px 14px;font-size:13px}
+  .reader{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="back" href="/handy/dashboard" id="backLink">← Back</a>
+  <h1>📬 Inbox</h1>
+  <button class="compose" onclick="showCompose()">+ Compose</button>
+  <a class="out" href="/handy/logout">Sign out</a>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="box on" data-box="inbox" onclick="setBox('inbox')">📥 Inbox <span class="badge" id="badge-inbox">0</span></div>
+    <div class="box" data-box="sent" onclick="setBox('sent')">📤 Sent</div>
+    <div class="box" data-box="notes" onclick="setBox('notes')">📝 Notes</div>
+    <div class="box" data-box="archived" onclick="setBox('archived')">🗄️ Archive</div>
+  </aside>
+
+  <main class="main" id="mainPane">
+    <div class="list" id="listPane"><div class="empty">Loading…</div></div>
+  </main>
+</div>
+
+<script>
+let currentBox = 'inbox';
+let recipients = { users: [], customers: [] };
+let messages = [];
+let me = null;
+
+// Adjust back link based on role — Aspen goes to /assistant, Danny to /dashboard
+(async function detectRole(){
+  try{
+    const r = await fetch('/handy/api/me', { credentials:'include' });
+    const d = await r.json();
+    if (d.ok && d.user) {
+      me = d.user;
+      const back = document.getElementById('backLink');
+      if (d.user.role === 'assistant') { back.href = '/handy/assistant'; back.textContent = '← Call console'; }
+      else { back.href = '/handy/dashboard'; back.textContent = '← Dashboard'; }
+    }
+  }catch(e){}
+})();
+
+async function loadRecipients(){
+  try{
+    const r = await fetch('/handy/api/mail/recipients', { credentials:'include' });
+    const d = await r.json();
+    if (d.ok) recipients = { users: d.users || [], customers: d.customers || [] };
+  }catch(e){}
+}
+
+async function loadUnread(){
+  try{
+    const r = await fetch('/handy/api/mail/unread-count', { credentials:'include' });
+    const d = await r.json();
+    if (d.ok) document.getElementById('badge-inbox').textContent = d.count || 0;
+  }catch(e){}
+}
+
+function setBox(box){
+  currentBox = box;
+  document.querySelectorAll('.sidebar .box').forEach(b => b.classList.toggle('on', b.dataset.box === box));
+  loadList();
+}
+
+async function loadList(){
+  const pane = document.getElementById('listPane');
+  pane.innerHTML = '<div class="empty">Loading…</div>';
+  try{
+    const r = await fetch('/handy/api/mail/inbox?box=' + currentBox, { credentials:'include' });
+    const d = await r.json();
+    messages = d.messages || [];
+    if (!messages.length) {
+      const emptyCopy = {
+        inbox: 'Inbox zero. Nothing new here.',
+        sent: 'You haven\\'t sent anything yet.',
+        notes: 'No notes saved. Try +Compose → Note to self.',
+        archived: 'Archive is empty.'
+      }[currentBox] || 'Empty.';
+      pane.innerHTML = '<div class="empty">' + emptyCopy + '</div>';
+      return;
+    }
+    document.getElementById('mainPane').innerHTML = '<div class="list" id="listPane">' + messages.map(renderRow).join('') + '</div>';
+  }catch(e){
+    pane.innerHTML = '<div class="empty">Failed to load — check your connection.</div>';
+  }
+}
+
+function esc(s){ return (s||'').toString().replace(/[<>&"]/g, m => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[m])); }
+function fmtWhen(ts){
+  if (!ts) return '';
+  const d = new Date(ts.replace(' ','T')+'Z');
+  const now = new Date();
+  const diffH = (now - d) / 36e5;
+  if (diffH < 1) return Math.max(1, Math.floor(diffH*60)) + 'm ago';
+  if (diffH < 24) return Math.floor(diffH) + 'h ago';
+  if (diffH < 24*7) return Math.floor(diffH/24) + 'd ago';
+  return d.toLocaleDateString();
+}
+
+function senderLabel(m){
+  if (currentBox === 'sent') return 'To: ' + (m.to_display_name || m.to_customer_name || m.to_email || 'unknown');
+  if (currentBox === 'notes') return '📝 Note to self';
+  return m.from_name || m.from_display_name || 'Unknown';
+}
+
+function renderRow(m){
+  const unread = !m.read_at && currentBox === 'inbox';
+  return `<div class="row ${unread?'unread':''}" onclick="openMsg(${m.id})">
+    <div class="dot ${unread?'':'hidden'}"></div>
+    <div class="body">
+      <div class="sender">${esc(senderLabel(m))}</div>
+      <div class="subj">${esc(m.subject || '(no subject)')}</div>
+      <div class="preview">${esc((m.body||'').slice(0, 120).replace(/\\s+/g,' '))}</div>
+    </div>
+    <div class="when">${fmtWhen(m.sent_at || m.created_at)}</div>
+  </div>`;
+}
+
+async function openMsg(id){
+  const m = messages.find(x => x.id === id);
+  if (!m) return;
+  if (!m.read_at && currentBox === 'inbox') {
+    try{ await fetch('/handy/api/mail/'+id+'/read', { method:'POST', credentials:'include' }); m.read_at = 'now'; loadUnread(); }catch(e){}
+  }
+  const from = m.from_name || m.from_display_name || 'Unknown';
+  const to = m.to_display_name || m.to_customer_name || m.to_email || (m.kind==='note'?'(myself)':'unknown');
+  document.getElementById('mainPane').innerHTML = `
+    <div class="reader">
+      <button style="background:transparent;border:none;color:var(--ink-soft);font-size:13px;margin-bottom:14px;cursor:pointer" onclick="loadList()">← Back to ${currentBox}</button>
+      <div class="hd">
+        <h2>${esc(m.subject || '(no subject)')}</h2>
+        <div class="meta"><b>From:</b> ${esc(from)} &nbsp; · &nbsp; <b>To:</b> ${esc(to)} &nbsp; · &nbsp; ${fmtWhen(m.sent_at || m.created_at)}</div>
+        <div class="actions">
+          <button onclick="replyTo(${m.id})">↩ Reply</button>
+          <button onclick="archiveMsg(${m.id})">🗄️ Archive</button>
+        </div>
+      </div>
+      <div class="body-text">${esc(m.body || '')}</div>
+    </div>`;
+}
+
+async function archiveMsg(id){
+  try{
+    await fetch('/handy/api/mail/'+id+'/archive', { method:'POST', credentials:'include' });
+    loadList(); loadUnread();
+  }catch(e){}
+}
+
+function replyTo(id){
+  const m = messages.find(x => x.id === id);
+  if (!m) return;
+  showCompose({
+    to_user_id: m.from_user_id,
+    subject: (m.subject||'').startsWith('Re: ') ? m.subject : 'Re: ' + (m.subject||''),
+    body: '\\n\\n─── original message ───\\n' + (m.body||'')
+  });
+}
+
+let composeKind = 'user';
+function showCompose(prefill){
+  composeKind = 'user';
+  document.getElementById('mainPane').innerHTML = `
+    <div class="compose-form">
+      <h2>New message</h2>
+      <div class="kind-tabs">
+        <button class="on" data-kind="user" onclick="setComposeKind('user')">👤 To user</button>
+        <button data-kind="customer" onclick="setComposeKind('customer')">🧑‍🔧 To customer</button>
+        <button data-kind="note" onclick="setComposeKind('note')">📝 Note to self</button>
+      </div>
+      <div id="recipientField"></div>
+      <div class="field"><label>Subject</label><input id="c_subj" type="text" placeholder="Short subject line" value="${esc(prefill?.subject||'')}"></div>
+      <div class="field"><label>Message</label><textarea id="c_body" placeholder="Write your message…">${esc(prefill?.body||'')}</textarea></div>
+      <button class="send" onclick="sendMsg()">Send</button>
+      <button class="cancel" onclick="loadList()">Cancel</button>
+      <div class="status" id="c_status"></div>
+    </div>`;
+  renderRecipientField(prefill);
+}
+function setComposeKind(k){
+  composeKind = k;
+  document.querySelectorAll('.kind-tabs button').forEach(b => b.classList.toggle('on', b.dataset.kind === k));
+  renderRecipientField();
+}
+function renderRecipientField(prefill){
+  const wrap = document.getElementById('recipientField');
+  if (composeKind === 'note') {
+    wrap.innerHTML = '<div style="padding:12px 16px;background:var(--cream);border-radius:8px;color:var(--ink-soft);font-size:14px;margin-bottom:16px">This will save as a private note visible only to you.</div>';
+  } else if (composeKind === 'user') {
+    const opts = recipients.users.map(u => `<option value="${u.id}" ${prefill?.to_user_id===u.id?'selected':''}>${esc(u.display_name || u.username)} (${esc(u.role||'')})</option>`).join('');
+    wrap.innerHTML = `<div class="field"><label>To (team member)</label><select id="c_user"><option value="">— Choose team member —</option>${opts}</select></div>`;
+  } else if (composeKind === 'customer') {
+    const opts = recipients.customers.map(c => `<option value="${c.id}">${esc(c.name)}${c.phone?' — '+esc(c.phone):''}</option>`).join('');
+    wrap.innerHTML = `<div class="field"><label>To (customer)</label><select id="c_cust"><option value="">— Choose customer —</option>${opts}</select><div style="font-size:12px;color:var(--ink-soft);margin-top:6px">Customer messages are saved locally for now. Outbound email routing coming soon.</div></div>`;
+  }
+}
+async function sendMsg(){
+  const status = document.getElementById('c_status');
+  status.className = 'status'; status.textContent = '';
+  const subject = document.getElementById('c_subj').value.trim();
+  const body = document.getElementById('c_body').value;
+  if (!body.trim()) { status.className='status err'; status.textContent='Message body is required.'; return; }
+  const payload = { subject, body, kind: composeKind };
+  if (composeKind === 'user') payload.to_user_id = document.getElementById('c_user')?.value || null;
+  if (composeKind === 'customer') payload.to_customer_id = document.getElementById('c_cust')?.value || null;
+  if (composeKind !== 'note' && !payload.to_user_id && !payload.to_customer_id) {
+    status.className='status err'; status.textContent='Pick a recipient.'; return;
+  }
+  try{
+    const r = await fetch('/handy/api/mail/send', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const d = await r.json();
+    if (d.ok) {
+      status.textContent = 'Sent.';
+      setTimeout(() => { setBox(composeKind === 'note' ? 'notes' : 'sent'); }, 500);
+    } else {
+      status.className='status err'; status.textContent = d.error || 'Send failed.';
+    }
+  }catch(e){
+    status.className='status err'; status.textContent = 'Network error.';
+  }
+}
+
+// init
+loadRecipients();
+loadUnread();
+loadList();
+setInterval(loadUnread, 30000);
+</script>
+</body>
+</html>

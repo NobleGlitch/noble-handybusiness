@@ -532,6 +532,219 @@ module.exports = function mount(app, db, mailer, requireAuth) {
     res.json({ ok: true, id: info.lastInsertRowid });
   });
 
+  // ── INTERNAL MAIL / INBOX (Danny ↔ Aspen ↔ customers, plus notes-to-self) ──
+  try { db.prepare(`CREATE TABLE IF NOT EXISTS handy_mail (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    from_user_id INTEGER,
+    from_name TEXT,
+    to_user_id INTEGER,
+    to_customer_id INTEGER,
+    to_email TEXT,
+    kind TEXT DEFAULT 'internal',
+    subject TEXT,
+    body TEXT NOT NULL,
+    read_at TEXT,
+    archived_at TEXT,
+    sent_at TEXT DEFAULT (datetime('now')),
+    ticket_id INTEGER,
+    job_id INTEGER,
+    created_at TEXT DEFAULT (datetime('now'))
+  )`).run(); } catch(_e){}
+  try { db.prepare("CREATE INDEX IF NOT EXISTS idx_handy_mail_to_user ON handy_mail(to_user_id, read_at)").run(); } catch(_e){}
+  try { db.prepare("CREATE INDEX IF NOT EXISTS idx_handy_mail_from_user ON handy_mail(from_user_id)").run(); } catch(_e){}
+
+  // Seed the software-valuation summary as an inbox welcome from Noble Glitch
+  // to every existing handy_user, the first time this table is empty.
+  try {
+    const mailCount = db.prepare("SELECT COUNT(*) AS n FROM handy_mail").get();
+    if (mailCount && mailCount.n === 0) {
+      const users = db.prepare("SELECT id FROM handy_users").all();
+      const subject = "What you actually got — market value of your website + software";
+      const body = [
+        "Hey Danny + Aspen,",
+        "",
+        "Save this in your inbox. When someone asks 'who built your setup?' and you want to know what it's actually worth, this is the answer.",
+        "",
+        "─── 1. WHAT YOU HAVE ───",
+        "",
+        "WEBSITE (handytucson.tech):",
+        "Custom marketing site — pricing band, $25-off offer, lead form, before/after gallery, FAQ, reviews, mobile-sticky call button, Noble Glitch network footer. Real design, real copy, real SSL.",
+        "",
+        "SOFTWARE (Noble Handybusiness):",
+        " · Owner dashboard for Danny (8 tabs — jobs, customers, invoices, PDF, quick-charge, chat, home, me)",
+        " · Assistant call console for Aspen (autocomplete, impossible-distance warnings, live call log, 3-action intake)",
+        " · Customer portal (signup, live booking calendar, ticket history)",
+        " · Automated appointment reminders (day-before, day-of, 2-hour)",
+        " · Overdue-invoice reminders (day 3, 7, 14, every 14 after)",
+        " · 90-min post-completion review-request cron",
+        " · PDF invoicing with signature capture + photo attachments",
+        " · SignalWire SMS layer with TCPA opt-out handling",
+        " · Legal-tip widget (rotating Arizona / Pima County handyman law)",
+        " · AI chat assistant",
+        " · Quick-charge mobile flow (finish job → invoice in 60 seconds from the driveway)",
+        " · Onboarding wizard for owner setup",
+        "",
+        "─── 2. WHAT AN AGENCY WOULD CHARGE TO BUILD THIS ───",
+        "",
+        "                          Website        Software        Bundle",
+        "Upwork freelancer:        $1.5k–$3.5k    $60k–$180k      $20k–$45k",
+        "Boutique agency:          $5k–$15k       $80k–$200k      $85k–$215k  ← market rate",
+        "Full-service agency:      $15k–$35k      $150k–$350k     $200k–$500k",
+        "Enterprise consultancy:   $30k–$70k      $400k–$800k+    $500k–$1M+",
+        "",
+        "Honest number to quote when someone asks: $100k – $150k at a legit Tucson/Phoenix boutique.",
+        "",
+        "─── 3. WHAT YOU'RE SAVING EVERY MONTH ───",
+        "",
+        "By OWNING this instead of renting SaaS subscriptions, you avoid:",
+        " · Field-service SaaS (Housecall Pro / Jobber): $60 – $250/mo per user",
+        " · Answering service (Ruby / Rosie): $200 – $1,000/mo",
+        " · Invoicing SaaS (QuickBooks paid): $25 – $90/mo",
+        " · SMS reminder tool (Textline / Podium): $100 – $400/mo",
+        " · Booking widget (Calendly Teams / Acuity): $15 – $50/mo",
+        "",
+        "≈ $400 – $1,800/mo saved forever = $5,000 – $22,000/year you'll never pay in subscriptions.",
+        "",
+        "─── 4. WHY OWNING SOFTWARE MATTERS (NOT JUST RENTING) ───",
+        "",
+        "Most small businesses rent software (SaaS). You OWN yours. That means:",
+        "",
+        "A. MULTIPLIER ON BUSINESS VALUE WHEN YOU SELL",
+        "When you sell a service business, buyers value:",
+        " · Rented software (SaaS): worth 0.5–2× annual profit",
+        " · Owned proprietary software: worth 3–8× annual revenue ON TOP OF the base business",
+        "",
+        "Real math: a handyman business doing $200k/year sells for maybe $150k–$300k on its own. Add owned proprietary software that runs the operation, and the same business sells for $400k–$700k. THE SOFTWARE IS OFTEN WORTH MORE THAN THE BUSINESS.",
+        "",
+        "B. NO VENDOR LOCK-IN",
+        "You can't get shut off. Housecall Pro raises prices 40%? Doesn't affect you. They pivot markets? Doesn't affect you. They get acquired and change terms? Doesn't affect you.",
+        "",
+        "C. CUSTOMIZATION STAYS YOURS",
+        "Every tweak Noble builds for Danny is Danny's forever. Aspen's call console, the mobile-home skirting language, the ADA grab-bar workflow, the $25-off first-job field — all yours, none of it evaporates when a SaaS company removes a feature.",
+        "",
+        "─── 5. WHAT YOU CAN DO WITH OWNED SOFTWARE (REVENUE PATHS) ───",
+        "",
+        "Beyond running your own business, you own the source code + brand. That means you can:",
+        "",
+        "PATH A — Sell it to other handymen (licensing subscriptions):",
+        "Charge $99 – $499/month per handyman to run their business on your platform.",
+        " · 20 handymen × $199/mo = $47,760/year passive income",
+        " · 100 handymen × $199/mo = $238,800/year",
+        " · 250 handymen × $199/mo = $597,000/year",
+        "",
+        "PATH B — Sell it outright to a competitor:",
+        "A regional field-service SaaS company might buy your codebase + brand + first customer as a market-entry play. Typical acquisition: $50k – $500k depending on user count.",
+        "",
+        "PATH C — License to a trade association / franchise:",
+        "Sell 'Handybusiness by Danny' to a trade association or franchise as a $10k – $50k/year enterprise license — they resell to their members.",
+        "",
+        "PATH D — Keep it private, keep the moat:",
+        "Just running it for Danny (and maybe one or two Tucson friends) makes Danny more competitive than every other Tucson handyman on price transparency, booking speed, and follow-up. That's a moat competitors can't buy.",
+        "",
+        "─── 6. BOTTOM LINE ───",
+        "",
+        "You didn't just get a website and a booking tool. You got:",
+        " · $100k – $150k of custom software (fair market value)",
+        " · $5k – $22k/year in ongoing SaaS you'll never pay again",
+        " · A moat no other Tucson handyman has",
+        " · An asset that could add $250k – $400k to the eventual sale price of the business",
+        " · An optional path to $50k – $250k+/year in software-licensing revenue",
+        "",
+        "Save this in your inbox. When someone asks 'what's your setup?' and you want to know what to say, this is the answer.",
+        "",
+        "— Noble"
+      ].join("\n");
+      const insert = db.prepare("INSERT INTO handy_mail (from_user_id, from_name, to_user_id, kind, subject, body) VALUES (NULL, 'Noble Glitch', ?, 'system', ?, ?)");
+      for (const u of users) insert.run(u.id, subject, body);
+    }
+  } catch(_e){}
+
+  // ── MAIL API ──
+  app.get("/handy/api/mail/unread-count", handySession, handyAuth, (req, res) => {
+    try {
+      const uid = req.session.handyUserId;
+      const row = db.prepare("SELECT COUNT(*) AS n FROM handy_mail WHERE to_user_id=? AND read_at IS NULL AND archived_at IS NULL").get(uid);
+      res.json({ ok: true, count: row.n });
+    } catch(e) { res.json({ ok: true, count: 0 }); }
+  });
+
+  app.get("/handy/api/mail/inbox", handySession, handyAuth, (req, res) => {
+    try {
+      const uid = req.session.handyUserId;
+      const box = String(req.query.box || "inbox").toLowerCase();
+      let rows;
+      if (box === "sent") {
+        rows = db.prepare(`SELECT m.*, u.display_name AS to_display_name, c.name AS to_customer_name
+          FROM handy_mail m
+          LEFT JOIN handy_users u ON u.id = m.to_user_id
+          LEFT JOIN handy_customers c ON c.id = m.to_customer_id
+          WHERE m.from_user_id = ? AND m.archived_at IS NULL
+          ORDER BY m.sent_at DESC LIMIT 200`).all(uid);
+      } else if (box === "notes") {
+        rows = db.prepare(`SELECT * FROM handy_mail WHERE from_user_id=? AND to_user_id=? AND kind='note' AND archived_at IS NULL ORDER BY sent_at DESC LIMIT 200`).all(uid, uid);
+      } else if (box === "archived") {
+        rows = db.prepare(`SELECT m.*, u.display_name AS from_display_name FROM handy_mail m LEFT JOIN handy_users u ON u.id = m.from_user_id WHERE (m.to_user_id=? OR m.from_user_id=?) AND m.archived_at IS NOT NULL ORDER BY m.archived_at DESC LIMIT 200`).all(uid, uid);
+      } else {
+        rows = db.prepare(`SELECT m.*, u.display_name AS from_display_name FROM handy_mail m LEFT JOIN handy_users u ON u.id = m.from_user_id WHERE m.to_user_id=? AND m.archived_at IS NULL ORDER BY m.sent_at DESC LIMIT 200`).all(uid);
+      }
+      res.json({ ok: true, messages: rows });
+    } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+  });
+
+  app.get("/handy/api/mail/recipients", handySession, handyAuth, (req, res) => {
+    try {
+      const uid = req.session.handyUserId;
+      const users = db.prepare("SELECT id, username, display_name, role FROM handy_users WHERE id != ? ORDER BY display_name").all(uid);
+      const customers = db.prepare("SELECT id, name, phone, email FROM handy_customers ORDER BY id DESC LIMIT 100").all();
+      res.json({ ok: true, users, customers });
+    } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+  });
+
+  app.post("/handy/api/mail/send", handySession, handyAuth, express.json(), (req, res) => {
+    try {
+      const uid = req.session.handyUserId;
+      const me = db.prepare("SELECT display_name, username FROM handy_users WHERE id=?").get(uid);
+      const fromName = (me && (me.display_name || me.username)) || "Unknown";
+      const b = req.body || {};
+      const to_user_id = b.to_user_id ? parseInt(b.to_user_id, 10) : null;
+      const to_customer_id = b.to_customer_id ? parseInt(b.to_customer_id, 10) : null;
+      const to_email = b.to_email ? String(b.to_email).trim().slice(0, 200) : null;
+      const subject = b.subject ? String(b.subject).trim().slice(0, 200) : "";
+      const body = b.body ? String(b.body).slice(0, 20000) : "";
+      const kind = String(b.kind || "internal").slice(0, 20);
+      const ticket_id = b.ticket_id ? parseInt(b.ticket_id, 10) : null;
+      const job_id = b.job_id ? parseInt(b.job_id, 10) : null;
+      if (!body || (!to_user_id && !to_customer_id && !to_email && kind !== "note")) {
+        return res.status(400).json({ ok: false, error: "body and at least one recipient are required" });
+      }
+      // Notes-to-self: recipient is the sender
+      const effectiveToUser = (kind === "note") ? uid : to_user_id;
+      const info = db.prepare(`INSERT INTO handy_mail (from_user_id, from_name, to_user_id, to_customer_id, to_email, kind, subject, body, ticket_id, job_id) VALUES (?,?,?,?,?,?,?,?,?,?)`).run(uid, fromName, effectiveToUser, to_customer_id, to_email, kind, subject, body, ticket_id, job_id);
+      res.json({ ok: true, id: info.lastInsertRowid });
+    } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+  });
+
+  app.post("/handy/api/mail/:id/read", handySession, handyAuth, (req, res) => {
+    try {
+      const uid = req.session.handyUserId;
+      db.prepare("UPDATE handy_mail SET read_at = datetime('now') WHERE id=? AND to_user_id=? AND read_at IS NULL").run(req.params.id, uid);
+      res.json({ ok: true });
+    } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+  });
+
+  app.post("/handy/api/mail/:id/archive", handySession, handyAuth, (req, res) => {
+    try {
+      const uid = req.session.handyUserId;
+      db.prepare("UPDATE handy_mail SET archived_at = datetime('now') WHERE id=? AND (to_user_id=? OR from_user_id=?)").run(req.params.id, uid, uid);
+      res.json({ ok: true });
+    } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+  });
+
+  app.get("/handy/mail", handySession, (req, res) => {
+    if (!req.session.handyUserId) return res.redirect("/handy/login");
+    res.sendFile(path.join(__dirname, "public", "handy", "mail.html"));
+  });
+
   // ── PUBLIC QUICK LEAD FORM (unauthenticated 3-field lead capture from landing page) ──
   try { db.prepare(`CREATE TABLE IF NOT EXISTS handy_quick_leads (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -24,7 +24,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 .view.on{display:block;animation:fade 200ms ease-out}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 /* Bottom nav (mobile) */
-.tabnav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--hair);display:grid;grid-template-columns:repeat(6,1fr);z-index:10;padding-bottom:env(safe-area-inset-bottom)}
+.tabnav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--hair);display:grid;grid-template-columns:repeat(8,1fr);z-index:10;padding-bottom:env(safe-area-inset-bottom)}
 .tab{background:none;border:none;padding:10px 4px;font-family:inherit;font-size:10px;color:var(--ink-soft);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:0.03em;font-weight:500}
 .tab .ic{font-size:22px;line-height:1}
 .tab.on{color:var(--blue)}
@@ -225,6 +225,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 <header class="topbar">
   <span class="brand" id="brandName">Handy</span>
   <span class="spacer"></span>
+  <a href="/handy/mail" class="out" style="margin-right:14px;position:relative" title="Inbox">📬 Inbox<span id="mailBadge" style="display:none;position:absolute;top:-4px;right:-8px;background:#B85450;color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:999px;min-width:16px;text-align:center"></span></a>
   <a href="/handy/assistant" class="out" style="margin-right:14px">Call console →</a>
   <a href="/handy/logout" class="out">Sign out</a>
 </header>
@@ -400,7 +401,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 </main>
 
 <!-- Bottom nav -->
-<nav class="tabnav" id="tabnav" style="grid-template-columns:repeat(8,1fr)">
+<nav class="tabnav" id="tabnav">
   <button class="tab on" data-tab="home"><span class="ic">🏠</span><span>Home</span></button>
   <button class="tab" data-tab="schedule"><span class="ic">🗺️</span><span>Route</span></button>
   <button class="tab" data-tab="tickets"><span class="ic">🎟️</span><span>Tickets</span><span class="reddot" id="ticketsDot"></span></button>
@@ -1289,6 +1290,18 @@ async function checkWizardStatus(){
 // Boot
 checkWizardStatus();
 loadMe();loadOverview();loadLegalTip(false);loadTodoList();startTodoPoller();
+</script>
+<script>
+(async function pollMail(){
+  try {
+    const r = await fetch('/handy/api/mail/unread-count');
+    const d = await r.json();
+    const b = document.getElementById('mailBadge');
+    if (b && d.ok && d.count > 0) { b.textContent = d.count; b.style.display = 'inline-block'; }
+    else if (b) { b.style.display = 'none'; }
+  } catch(e){}
+  setTimeout(pollMail, 30000);
+})();
 </script>
 </body>
 </html>
