@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<title>Aspen · Call Console</title>
+<meta name="theme-color" content="#FAF6EF">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #FAF6EF;
+  --surface: #fff;
+  --surface-2: #F3EEE4;
+  --ink: #2A2622;
+  --ink-soft: #6A6560;
+  --hair: #E4DED2;
+  --blue: #3B6E8F;
+  --blue-ink: #29506A;
+  --hearth: #E8955A;
+  --hearth-deep: #C86E33;
+  --sage: #6B9F72;
+  --clay: #B85450;
+  --amber: #D89B3F;
+}
+html, body { height: 100%; background: var(--bg); color: var(--ink); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; font-size: 15px; }
+body { display: flex; flex-direction: column; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); }
+
+/* ── TOP BAR ── */
+.topbar { background: var(--surface); border-bottom: 1px solid var(--hair); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 20; }
+.brand { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 17px; color: var(--ink); }
+.brand .role { color: var(--hearth-deep); font-weight: 600; font-size: 13px; font-family: 'Inter', sans-serif; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+.topbar a.out { color: var(--ink-soft); font-size: 13px; text-decoration: none; padding: 8px 12px; border-radius: 8px; }
+.topbar a.out:hover { background: var(--surface-2); }
+
+/* ── HERO ── */
+.hero { padding: 28px 18px 18px; text-align: center; }
+.now { font-family: 'Fraunces', Georgia, serif; font-size: 20px; color: var(--ink-soft); margin-bottom: 16px; }
+.now .tm { color: var(--ink); font-weight: 700; }
+.phone-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 14px;
+  width: min(560px, 92vw); min-height: 132px;
+  background: linear-gradient(135deg, var(--hearth) 0%, var(--hearth-deep) 100%);
+  color: #fff; border: none; border-radius: 24px;
+  font-family: 'Fraunces', Georgia, serif; font-size: 42px; font-weight: 700; letter-spacing: -0.01em;
+  cursor: pointer; box-shadow: 0 10px 30px rgba(200,110,51,0.35), inset 0 -4px 0 rgba(0,0,0,0.1);
+  transition: transform 0.08s ease, box-shadow 0.2s ease;
+  animation: pulse 2.6s ease-in-out infinite;
+  padding: 22px 28px;
+}
+.phone-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(200,110,51,0.45), inset 0 -4px 0 rgba(0,0,0,0.1); }
+.phone-btn:active { transform: translateY(1px); }
+.phone-btn .ic { font-size: 46px; }
+@keyframes pulse {
+  0%,100% { box-shadow: 0 10px 30px rgba(200,110,51,0.35), inset 0 -4px 0 rgba(0,0,0,0.1), 0 0 0 0 rgba(232,149,90,0.5); }
+  50%     { box-shadow: 0 10px 30px rgba(200,110,51,0.35), inset 0 -4px 0 rgba(0,0,0,0.1), 0 0 0 18px rgba(232,149,90,0); }
+}
+
+/* ── DAY STATS ── */
+.day { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 720px; margin: 18px auto 0; padding: 0 18px; }
+.day .stat { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 10px 8px; text-align: center; }
+.day .stat .n { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700; color: var(--blue); line-height: 1; }
+.day .stat.hearth .n { color: var(--hearth-deep); }
+.day .stat.sage .n { color: var(--sage); }
+.day .stat.amber .n { color: var(--amber); }
+.day .stat .lbl { font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+/* ── CALL LOG ── */
+.log { max-width: 720px; margin: 24px auto 40px; padding: 0 18px; width: 100%; }
+.log h2 { font-family: 'Fraunces', serif; font-size: 20px; margin-bottom: 12px; color: var(--ink); display: flex; align-items: center; gap: 10px; }
+.log h2 .cnt { background: var(--surface-2); color: var(--ink-soft); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+.log-empty { text-align: center; padding: 32px 18px; color: var(--ink-soft); font-size: 14px; background: var(--surface); border: 1px dashed var(--hair); border-radius: 12px; }
+.call-item { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s; }
+.call-item:hover { border-color: var(--blue); }
+.call-item .row1 { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.call-item .who { font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px; color: var(--ink); }
+.call-item .who .newpill { background: var(--sage); color: #fff; font-family: 'Inter'; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-left: 6px; letter-spacing: 0.05em; text-transform: uppercase; vertical-align: middle; }
+.call-item .who .returnpill { background: var(--blue); color: #fff; font-family: 'Inter'; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-left: 6px; letter-spacing: 0.05em; text-transform: uppercase; vertical-align: middle; }
+.call-item .tm { color: var(--ink-soft); font-size: 13px; font-variant-numeric: tabular-nums; }
+.call-item .row2 { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+.call-item .reason { background: var(--surface-2); color: var(--ink); font-size: 12px; padding: 3px 10px; border-radius: 999px; font-weight: 500; }
+.call-item .outcome { color: var(--ink-soft); font-size: 12px; }
+.call-item .outcome.job { color: var(--hearth-deep); font-weight: 600; }
+.call-item .outcome.callback { color: var(--amber); font-weight: 600; }
+.call-item .phone { color: var(--ink-soft); font-size: 13px; font-variant-numeric: tabular-nums; }
+.call-item .notes-preview { color: var(--ink-soft); font-size: 13px; margin-top: 6px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.call-item.expanded .notes-preview { -webkit-line-clamp: unset; }
+.call-item .notes-full { display: none; color: var(--ink); font-size: 14px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--hair); white-space: pre-wrap; }
+.call-item.expanded .notes-full { display: block; }
+
+.footer-link { text-align: center; padding: 20px 18px 32px; color: var(--ink-soft); font-size: 13px; }
+.footer-link a { color: var(--blue); text-decoration: none; }
+.footer-link a:hover { text-decoration: underline; }
+
+/* ── INTAKE SHEET (bottom on mobile, side on desktop) ── */
+.scrim { position: fixed; inset: 0; background: rgba(42,38,34,0.4); z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.scrim.open { opacity: 1; pointer-events: auto; }
+.sheet {
+  position: fixed; z-index: 50; background: var(--surface); box-shadow: 0 -6px 30px rgba(0,0,0,0.15);
+  transition: transform 0.28s cubic-bezier(0.2,0.9,0.3,1);
+  display: flex; flex-direction: column;
+}
+/* Mobile: bottom sheet */
+@media (max-width: 720px) {
+  .sheet { left: 0; right: 0; bottom: 0; top: 4%; border-radius: 22px 22px 0 0; transform: translateY(100%); }
+  .sheet.open { transform: translateY(0); }
+  .sheet .grabber { width: 46px; height: 5px; background: var(--hair); border-radius: 999px; margin: 10px auto 4px; }
+}
+/* Desktop: side panel */
+@media (min-width: 721px) {
+  .sheet { top: 0; bottom: 0; right: 0; width: min(520px, 92vw); border-radius: 22px 0 0 22px; transform: translateX(100%); }
+  .sheet.open { transform: translateX(0); }
+  .sheet .grabber { display: none; }
+}
+.sheet-hdr { padding: 12px 20px 8px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); }
+.sheet-hdr h2 { font-family: 'Fraunces', serif; font-size: 22px; color: var(--ink); }
+.sheet-hdr .close { background: none; border: none; font-size: 26px; color: var(--ink-soft); cursor: pointer; padding: 4px 8px; line-height: 1; }
+.sheet-body { padding: 16px 20px 20px; overflow-y: auto; flex: 1; }
+
+.field { margin-bottom: 14px; position: relative; }
+.field label { display: block; font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; font-weight: 600; }
+.field input, .field textarea { width: 100%; padding: 14px 14px; border: 1.5px solid var(--hair); border-radius: 10px; font-size: 16px; color: var(--ink); background: var(--surface); font-family: inherit; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--blue); }
+.field textarea { resize: vertical; min-height: 90px; }
+.field .hint { display: block; margin-top: 4px; font-size: 12px; color: var(--ink-soft); }
+.field .matched { display: none; margin-top: 8px; padding: 10px 12px; background: rgba(107,159,114,0.12); border: 1px solid var(--sage); border-radius: 8px; font-size: 13px; color: var(--sage); }
+.field .matched.on { display: block; }
+.field .matched strong { color: var(--ink); font-weight: 600; }
+
+.autocomplete { position: absolute; left: 0; right: 0; top: 100%; background: var(--surface); border: 1px solid var(--hair); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 3; max-height: 260px; overflow-y: auto; display: none; margin-top: 4px; }
+.autocomplete.open { display: block; }
+.autocomplete .opt { padding: 12px 14px; border-bottom: 1px solid var(--hair); cursor: pointer; }
+.autocomplete .opt:last-child { border-bottom: none; }
+.autocomplete .opt:hover { background: var(--surface-2); }
+.autocomplete .opt .n { font-weight: 600; color: var(--ink); }
+.autocomplete .opt .p { font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; margin-top: 2px; }
+.autocomplete .opt .a { font-size: 12px; color: var(--ink-soft); margin-top: 1px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { padding: 10px 14px; border: 1.5px solid var(--hair); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.12s; min-height: 42px; }
+.chip:hover { border-color: var(--blue); }
+.chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+.warnings { margin: 14px 0; padding: 12px 14px; background: rgba(184,84,80,0.08); border: 1px solid var(--clay); border-radius: 10px; display: none; }
+.warnings.on { display: block; }
+.warnings .whdr { color: var(--clay); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.warnings ul { margin: 0; padding-left: 18px; color: var(--ink); font-size: 13px; }
+.warnings li { margin-bottom: 3px; }
+
+.actions { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 8px; }
+.action-btn { padding: 18px 20px; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; color: #fff; cursor: pointer; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px; min-height: 62px; letter-spacing: -0.01em; }
+.action-btn .ic { font-size: 22px; }
+.action-btn.log { background: var(--sage); }
+.action-btn.log:hover { background: #5A8A61; }
+.action-btn.callback { background: var(--amber); color: var(--ink); }
+.action-btn.callback:hover { background: #C48C38; }
+.action-btn.job { background: var(--hearth); }
+.action-btn.job:hover { background: var(--hearth-deep); }
+.action-btn:disabled { opacity: 0.6; cursor: wait; }
+
+.sub-panel { display: none; padding: 12px; background: var(--surface-2); border-radius: 10px; margin-top: 6px; }
+.sub-panel.on { display: block; }
+.sub-panel .field { margin-bottom: 10px; }
+
+/* ── TOAST ── */
+.toast { position: fixed; top: 22px; left: 50%; transform: translateX(-50%) translateY(-160%); background: var(--ink); color: #fff; padding: 14px 22px; border-radius: 12px; font-size: 14px; font-weight: 500; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.25); transition: transform 0.35s cubic-bezier(0.2,0.9,0.3,1); max-width: 92vw; }
+.toast.on { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--sage); }
+.toast.error { background: var(--clay); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Aspen <span class="role">Assistant Console</span></div>
+  <a class="out" href="/handy/logout">Sign out</a>
+</div>
+
+<div class="hero">
+  <div class="now">Now: <span class="tm" id="now"></span></div>
+  <button class="phone-btn" id="ringBtn" type="button">
+    <span class="ic">&#128222;</span> PHONE RANG
+  </button>
+</div>
+
+<div class="day" id="dayStats">
+  <div class="stat"><div class="n" id="s-total">0</div><div class="lbl">Calls today</div></div>
+  <div class="stat sage"><div class="n" id="s-log">0</div><div class="lbl">Logged</div></div>
+  <div class="stat amber"><div class="n" id="s-cb">0</div><div class="lbl">Callbacks</div></div>
+  <div class="stat hearth"><div class="n" id="s-job">0</div><div class="lbl">Jobs</div></div>
+</div>
+
+<div class="log">
+  <h2>Today's calls <span class="cnt" id="logCount">0</span></h2>
+  <div id="logList"></div>
+</div>
+
+<div class="footer-link">
+  <a href="/handy/dashboard">View Danny's dashboard &rarr;</a>
+</div>
+
+<!-- INTAKE SHEET -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="grabber"></div>
+  <div class="sheet-hdr">
+    <h2 id="sheetTitle">New call &middot; <span id="sheetTime"></span></h2>
+    <button class="close" id="closeSheet" aria-label="Close">&times;</button>
+  </div>
+  <div class="sheet-body">
+    <div class="field">
+      <label for="fName">Caller name</label>
+      <input id="fName" type="text" autocomplete="off" placeholder="e.g. John Doe">
+      <div class="autocomplete" id="acName"></div>
+    </div>
+    <div class="field">
+      <label for="fPhone">Phone number</label>
+      <input id="fPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(520) 555-1234">
+      <div class="matched" id="matchedChip">
+        <strong>Returning customer:</strong> <span id="matchedName"></span>
+      </div>
+    </div>
+    <div class="field" id="addrField">
+      <label for="fAddr">Address <span class="hint" style="display:inline; text-transform:none; letter-spacing:0; font-size:11px; margin-left:6px;">(new customer only &middot; optional)</span></label>
+      <input id="fAddr" type="text" autocomplete="off" placeholder="1234 E Speedway, Tucson AZ">
+    </div>
+    <div class="field">
+      <label>Reason</label>
+      <div class="chips" id="reasonChips">
+        <button type="button" class="chip" data-r="Question">Question</button>
+        <button type="button" class="chip" data-r="Book Service">Book Service</button>
+        <button type="button" class="chip" data-r="Complaint">Complaint</button>
+        <button type="button" class="chip" data-r="Callback">Callback</button>
+        <button type="button" class="chip" data-r="Referral">Referral</button>
+        <button type="button" class="chip" data-r="Other">Other</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="fNotes">Notes</label>
+      <textarea id="fNotes" placeholder="What did they say? Any details Danny will need&hellip;"></textarea>
+    </div>
+
+    <!-- Callback sub-panel -->
+    <div class="sub-panel" id="cbPanel">
+      <div class="field">
+        <label for="fCbDate">Callback date</label>
+        <input id="fCbDate" type="date">
+      </div>
+      <div class="field">
+        <label for="fCbTime">Callback time</label>
+        <input id="fCbTime" type="time">
+      </div>
+    </div>
+
+    <!-- Job sub-panel -->
+    <div class="sub-panel" id="jobPanel">
+      <div class="field">
+        <label for="fJobDate">Job date</label>
+        <input id="fJobDate" type="date">
+      </div>
+      <div class="field">
+        <label>Time window</label>
+        <div class="chips" id="windowChips">
+          <button type="button" class="chip" data-w="morning">Morning</button>
+          <button type="button" class="chip" data-w="afternoon">Afternoon</button>
+          <button type="button" class="chip" data-w="afterhours">After-hours (1.75&times;)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="warnings" id="warnBox">
+      <div class="whdr">&#9888; Scheduling conflict</div>
+      <ul id="warnList"></ul>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="action-btn log" id="btnLog"><span class="ic">&#10003;</span> Just Logged</button>
+      <button type="button" class="action-btn callback" id="btnCallback"><span class="ic">&#128197;</span> Schedule Callback</button>
+      <button type="button" class="action-btn job" id="btnJob"><span class="ic">&#128295;</span> Schedule Job</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Time (America/Phoenix, no DST) ──
+const PHX_TZ = 'America/Phoenix';
+function fmtNow() {
+  const opts = { timeZone: PHX_TZ, hour: 'numeric', minute: '2-digit', hour12: true, weekday: 'short', month: 'short', day: 'numeric' };
+  return new Date().toLocaleString('en-US', opts).replace(',', ' ·');
+}
+function fmtTime(iso) {
+  if (!iso) return '';
+  // Server stores UTC "YYYY-MM-DD HH:MM:SS" (SQLite CURRENT_TIMESTAMP) or ISO
+  const d = new Date(iso.includes('T') || iso.includes('Z') ? iso : iso.replace(' ', 'T') + 'Z');
+  return d.toLocaleTimeString('en-US', { timeZone: PHX_TZ, hour: 'numeric', minute: '2-digit', hour12: true });
+}
+function tickNow() { document.getElementById('now').textContent = fmtNow(); }
+tickNow(); setInterval(tickNow, 1000);
+
+// ── Phone formatting ──
+function formatPhone(v) {
+  const d = String(v || '').replace(/\D+/g, '').slice(0, 10);
+  if (d.length < 4) return d;
+  if (d.length < 7) return `(${d.slice(0,3)}) ${d.slice(3)}`;
+  return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+}
+document.getElementById('fPhone').addEventListener('input', (e) => {
+  const cursor = e.target.selectionStart;
+  const before = e.target.value;
+  e.target.value = formatPhone(e.target.value);
+  // Trigger match lookup
+  onPhoneChange();
+});
+
+// ── Sheet open/close ──
+const scrim = document.getElementById('scrim');
+const sheet = document.getElementById('sheet');
+function openSheet() {
+  document.getElementById('sheetTime').textContent = fmtNow();
+  scrim.classList.add('open'); sheet.classList.add('open');
+  setTimeout(() => document.getElementById('fName').focus(), 300);
+}
+function closeSheet() {
+  scrim.classList.remove('open'); sheet.classList.remove('open');
+  resetForm();
+}
+document.getElementById('ringBtn').addEventListener('click', openSheet);
+document.getElementById('closeSheet').addEventListener('click', closeSheet);
+scrim.addEventListener('click', closeSheet);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && sheet.classList.contains('open')) closeSheet(); });
+
+// ── Reason chips ──
+let selectedReason = null;
+document.querySelectorAll('#reasonChips .chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('#reasonChips .chip').forEach(x => x.classList.remove('on'));
+    c.classList.add('on'); selectedReason = c.dataset.r;
+  });
+});
+let selectedWindow = null;
+document.querySelectorAll('#windowChips .chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('#windowChips .chip').forEach(x => x.classList.remove('on'));
+    c.classList.add('on'); selectedWindow = c.dataset.w;
+  });
+});
+
+// ── Customer autocomplete + phone match ──
+let matchedCustomerId = null;
+let acDebounce = null;
+document.getElementById('fName').addEventListener('input', (e) => {
+  const q = e.target.value.trim();
+  clearTimeout(acDebounce);
+  if (q.length < 2) { closeAc(); return; }
+  acDebounce = setTimeout(() => runAutocomplete(q), 200);
+});
+async function runAutocomplete(q) {
+  try {
+    const r = await fetch('/handy/api/customers/quick-search?q=' + encodeURIComponent(q), { credentials: 'include' });
+    const d = await r.json();
+    renderAc(d.results || []);
+  } catch(e){ closeAc(); }
+}
+function renderAc(results) {
+  const box = document.getElementById('acName');
+  if (!results.length) { closeAc(); return; }
+  box.innerHTML = results.slice(0, 8).map(c => `
+    <div class="opt" data-id="${c.id}" data-name="${escapeAttr(c.name || '')}" data-phone="${escapeAttr(c.phone || '')}" data-addr="${escapeAttr(c.address || '')}">
+      <div class="n">${escapeHtml(c.name || '(no name)')}</div>
+      <div class="p">${escapeHtml(formatPhone(c.phone) || '(no phone)')}</div>
+      ${c.address ? `<div class="a">${escapeHtml(c.address)}</div>` : ''}
+    </div>
+  `).join('');
+  box.classList.add('open');
+  box.querySelectorAll('.opt').forEach(o => o.addEventListener('click', () => {
+    document.getElementById('fName').value = o.dataset.name;
+    document.getElementById('fPhone').value = formatPhone(o.dataset.phone);
+    if (o.dataset.addr) document.getElementById('fAddr').value = o.dataset.addr;
+    matchedCustomerId = parseInt(o.dataset.id, 10);
+    showMatched(o.dataset.name);
+    closeAc();
+  }));
+}
+function closeAc() { document.getElementById('acName').classList.remove('open'); }
+function showMatched(name) {
+  document.getElementById('matchedName').textContent = name;
+  document.getElementById('matchedChip').classList.add('on');
+  document.getElementById('addrField').style.opacity = '0.5';
+}
+function clearMatched() {
+  matchedCustomerId = null;
+  document.getElementById('matchedChip').classList.remove('on');
+  document.getElementById('addrField').style.opacity = '1';
+}
+let phoneDebounce = null;
+function onPhoneChange() {
+  clearTimeout(phoneDebounce);
+  const digits = document.getElementById('fPhone').value.replace(/\D+/g, '');
+  if (digits.length < 7) { clearMatched(); return; }
+  phoneDebounce = setTimeout(async () => {
+    try {
+      const r = await fetch('/handy/api/customers/quick-search?q=' + encodeURIComponent(digits), { credentials: 'include' });
+      const d = await r.json();
+      const key = digits.slice(-10);
+      const hit = (d.results || []).find(c => (c.phone || '').replace(/\D+/g,'').slice(-10) === key);
+      if (hit) {
+        matchedCustomerId = hit.id;
+        if (!document.getElementById('fName').value) document.getElementById('fName').value = hit.name || '';
+        if (hit.address && !document.getElementById('fAddr').value) document.getElementById('fAddr').value = hit.address;
+        showMatched(hit.name || 'known customer');
+      } else {
+        clearMatched();
+      }
+    } catch(e){}
+  }, 350);
+}
+
+// ── Action buttons: reveal sub-panels ──
+document.getElementById('btnCallback').addEventListener('click', () => {
+  // If callback sub-panel is not open, open it and let user pick a time
+  const cbP = document.getElementById('cbPanel');
+  const jobP = document.getElementById('jobPanel');
+  jobP.classList.remove('on');
+  if (!cbP.classList.contains('on')) {
+    cbP.classList.add('on');
+    // Prefill: tomorrow at 10am
+    const t = new Date(); t.setDate(t.getDate() + 1);
+    document.getElementById('fCbDate').value = t.toISOString().slice(0, 10);
+    if (!document.getElementById('fCbTime').value) document.getElementById('fCbTime').value = '10:00';
+    return;
+  }
+  submitCall('schedule_callback');
+});
+document.getElementById('btnJob').addEventListener('click', () => {
+  const jobP = document.getElementById('jobPanel');
+  const cbP = document.getElementById('cbPanel');
+  cbP.classList.remove('on');
+  if (!jobP.classList.contains('on')) {
+    jobP.classList.add('on');
+    const t = new Date(); t.setDate(t.getDate() + 1);
+    document.getElementById('fJobDate').value = t.toISOString().slice(0, 10);
+    return;
+  }
+  if (!selectedWindow) { toast('Pick a time window (morning / afternoon / after-hours)', 'error'); return; }
+  // Run distance-check before final submit
+  runDistanceCheck(document.getElementById('fJobDate').value).then(() => submitCall('schedule_job'));
+});
+document.getElementById('btnLog').addEventListener('click', () => submitCall('logged_only'));
+
+// ── Distance check ──
+async function runDistanceCheck(date) {
+  if (!date) return;
+  try {
+    const r = await fetch('/handy/api/distance-check?date=' + encodeURIComponent(date), { credentials: 'include' });
+    const d = await r.json();
+    const hard = (d.warnings || []).filter(w => w.severity === 'hard');
+    const box = document.getElementById('warnBox');
+    const list = document.getElementById('warnList');
+    if (hard.length) {
+      list.innerHTML = hard.map(w => `<li>${escapeHtml(w.msg)}</li>`).join('');
+      box.classList.add('on');
+    } else {
+      box.classList.remove('on');
+    }
+  } catch(e){}
+}
+
+// ── Submit ──
+async function submitCall(action) {
+  const body = {
+    caller_name: document.getElementById('fName').value.trim(),
+    caller_phone: document.getElementById('fPhone').value.trim(),
+    address: document.getElementById('fAddr').value.trim(),
+    reason: selectedReason || '',
+    notes: document.getElementById('fNotes').value.trim(),
+    action
+  };
+  if (!body.caller_name && !body.caller_phone) { toast('Enter a name or phone number', 'error'); return; }
+  if (action === 'schedule_callback') {
+    const d = document.getElementById('fCbDate').value;
+    const t = document.getElementById('fCbTime').value;
+    if (!d || !t) { toast('Pick a callback date + time', 'error'); return; }
+    body.callback_at = `${d} ${t}`;
+  }
+  if (action === 'schedule_job') {
+    body.job_date = document.getElementById('fJobDate').value;
+    body.job_window = selectedWindow;
+    if (!body.job_date || !body.job_window) { toast('Pick a job date + window', 'error'); return; }
+  }
+  const btns = document.querySelectorAll('.action-btn');
+  btns.forEach(b => b.disabled = true);
+  try {
+    const r = await fetch('/handy/api/calls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(body) });
+    const d = await r.json();
+    if (!d.ok) { toast(d.error || 'Failed to log call', 'error'); btns.forEach(b => b.disabled = false); return; }
+    // Toast summary
+    const who = body.caller_name || body.caller_phone;
+    let msg = `Logged ${fmtNow().split(' ·')[0]} · ${who}`;
+    if (action === 'schedule_callback') msg += ` · callback ${body.callback_at}`;
+    if (action === 'schedule_job') msg += ` · ticket #${d.ticket_id} ${body.job_date} ${body.job_window}`;
+    toast(msg, 'success');
+    closeSheet();
+    loadCalls();
+  } catch(e){ toast('Network error', 'error'); btns.forEach(b => b.disabled = false); }
+}
+
+function resetForm() {
+  document.getElementById('fName').value = '';
+  document.getElementById('fPhone').value = '';
+  document.getElementById('fAddr').value = '';
+  document.getElementById('fNotes').value = '';
+  document.getElementById('fCbDate').value = '';
+  document.getElementById('fCbTime').value = '';
+  document.getElementById('fJobDate').value = '';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('on'));
+  document.getElementById('warnBox').classList.remove('on');
+  selectedReason = null; selectedWindow = null;
+  clearMatched();
+  closeAc();
+  document.querySelectorAll('.action-btn').forEach(b => b.disabled = false);
+}
+
+// ── Toast ──
+let toastTimer = null;
+function toast(msg, kind) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast on' + (kind ? ' ' + kind : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.classList.remove('on'); }, 4200);
+}
+
+// ── Call log ──
+async function loadCalls() {
+  try {
+    const r = await fetch('/handy/api/calls/today', { credentials: 'include' });
+    const d = await r.json();
+    renderCalls(d.calls || [], d.counts || {});
+  } catch(e){}
+}
+function renderCalls(calls, counts) {
+  document.getElementById('s-total').textContent = counts.total || 0;
+  document.getElementById('s-log').textContent = counts.logged_only || 0;
+  document.getElementById('s-cb').textContent = counts.callback || 0;
+  document.getElementById('s-job').textContent = counts.job || 0;
+  document.getElementById('logCount').textContent = calls.length;
+  const list = document.getElementById('logList');
+  if (!calls.length) {
+    list.innerHTML = '<div class="log-empty">No calls logged yet today. Tap PHONE RANG above when the next one comes in.</div>';
+    return;
+  }
+  list.innerHTML = calls.map(c => {
+    const who = escapeHtml(c.caller_name || c.customer_name_stored || '(unknown caller)');
+    const pill = c.is_new_customer ? '<span class="newpill">NEW</span>' : (c.customer_id ? '<span class="returnpill">returning</span>' : '');
+    const reason = c.reason ? `<span class="reason">${escapeHtml(c.reason)}</span>` : '';
+    const outClass = c.action === 'schedule_job' ? 'job' : (c.action === 'schedule_callback' ? 'callback' : '');
+    const outcome = c.outcome ? `<span class="outcome ${outClass}">${escapeHtml(c.outcome)}</span>` : '';
+    const phone = c.caller_phone ? `<span class="phone">${escapeHtml(formatPhone(c.caller_phone))}</span>` : '';
+    const notesPreview = c.notes ? `<div class="notes-preview">${escapeHtml(c.notes)}</div>` : '';
+    const notesFull = c.notes ? `<div class="notes-full">${escapeHtml(c.notes)}</div>` : '';
+    return `
+      <div class="call-item" data-id="${c.id}">
+        <div class="row1">
+          <div class="who">${who}${pill}</div>
+          <div class="tm">${escapeHtml(fmtTime(c.taken_at))}</div>
+        </div>
+        <div class="row2">${phone}${reason}${outcome}</div>
+        ${notesPreview}${notesFull}
+      </div>
+    `;
+  }).join('');
+  list.querySelectorAll('.call-item').forEach(it => it.addEventListener('click', () => it.classList.toggle('expanded')));
+}
+
+// ── Utilities ──
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function escapeAttr(s) { return escapeHtml(s); }
+
+// Boot
+loadCalls();
+setInterval(loadCalls, 20000);
+</script>
+</body>
+</html>

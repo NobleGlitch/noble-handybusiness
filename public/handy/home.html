@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>Danny McKay Handyman — Tucson home fixes, simplified</title>
+<meta name="description" content="Tucson's dedicated handyman for mobile-home communities, HOAs, and homeowners. Book online in 60 seconds. Insured, warrantied, no surprises.">
+<meta name="theme-color" content="#FAF8F5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF8F5;
+  --text:#1F2933;
+  --structural:#3D4A57;
+  --cta:#E8590C;
+  --divider:#E5E0D8;
+  --muted:#5A6470;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:18px;line-height:1.6;scroll-behavior:smooth}
+img{max-width:100%;display:block}
+a{color:var(--text);text-decoration:underline;text-decoration-color:var(--divider);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--structural)}
+button{font-family:inherit;cursor:pointer;font-size:18px}
+h1,h2,h3,h4{font-family:'Archivo',system-ui,sans-serif;font-weight:700;color:var(--structural);line-height:1.15;letter-spacing:-0.01em}
+h1{font-size:40px}
+h2{font-size:32px}
+h3{font-size:22px}
+h4{font-size:18px}
+@media(min-width:820px){
+  h1{font-size:56px}
+  h2{font-size:40px}
+  h3{font-size:24px}
+}
+p{margin-bottom:14px}
+p:last-child{margin-bottom:0}
+
+/* === CTA BUTTON (orange used ONLY here) === */
+.cta{display:inline-block;background:var(--cta);color:#fff;padding:16px 28px;border:none;border-radius:4px;font-weight:700;font-size:18px;font-family:'Inter',sans-serif;text-decoration:none;transition:background 120ms;cursor:pointer;line-height:1;text-align:center}
+.cta:hover{background:#C24700;text-decoration:none}
+.cta-lg{padding:20px 34px;font-size:20px}
+.cta-full{display:block;width:100%}
+
+/* === LAYOUT === */
+.section{max-width:1100px;margin:0 auto;padding:64px 24px}
+.section-tight{padding:40px 24px}
+.divider{border-top:1px solid var(--divider)}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+.eyebrow{font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;color:var(--structural);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:14px}
+
+/* === STICKY HEADER (business name left, tel right) === */
+.hdr{position:sticky;top:0;z-index:60;background:var(--bg);border-bottom:1px solid var(--divider)}
+.hdr-in{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.hdr .biz{font-family:'Archivo',sans-serif;font-weight:700;font-size:20px;color:var(--structural);text-decoration:none;line-height:1.1}
+.hdr .biz small{display:block;font-family:'Inter';font-weight:500;font-size:12px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px}
+.hdr .rt{display:flex;align-items:center;gap:18px}
+.hdr .tel{font-family:'Archivo',sans-serif;font-weight:700;font-size:18px;color:var(--structural);text-decoration:none;white-space:nowrap}
+.hdr .tel:hover{color:var(--text)}
+@media(max-width:640px){
+  .hdr .biz{font-size:16px}
+  .hdr .biz small{display:none}
+  .hdr .tel{font-size:15px}
+  .hdr .cta{padding:11px 16px;font-size:14px}
+  .hdr-in{padding:12px 16px}
+}
+
+/* === HERO === */
+.hero{padding:56px 24px 40px;max-width:1200px;margin:0 auto}
+.hero-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:48px;align-items:center}
+.hero h1{margin-bottom:18px}
+.hero .lead{font-size:20px;line-height:1.55;color:var(--text);margin-bottom:24px;max-width:56ch}
+.hero .offer-line{background:var(--bg);border:1px dashed var(--structural);border-radius:6px;padding:12px 16px;font-size:16px;color:var(--text);margin-bottom:24px;font-weight:600}
+.hero .offer-line strong{color:var(--structural)}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.hero .meta{color:var(--muted);font-size:15px;line-height:1.7}
+.hero .meta span{margin-right:16px;white-space:nowrap}
+.hero-photo{position:relative}
+.hero-photo img{width:100%;max-width:460px;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:8px}
+.hero-photo .cap{position:absolute;top:14px;left:14px;background:var(--structural);color:#fff;padding:6px 12px;border-radius:4px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase}
+@media(max-width:820px){
+  .hero-grid{grid-template-columns:1fr;gap:28px}
+  .hero-photo{order:-1}
+  .hero-photo img{max-width:340px}
+  .hero{padding:32px 24px 24px}
+}
+
+/* === PRICING BAND (plain rows) === */
+.price{background:var(--bg);border-top:1px solid var(--divider);border-bottom:1px solid var(--divider)}
+.price-in{max-width:900px;margin:0 auto;padding:56px 24px}
+.price-row{display:grid;grid-template-columns:1fr auto;gap:24px;padding:22px 0;border-bottom:1px solid var(--divider);align-items:baseline}
+.price-row:last-of-type{border-bottom:none}
+.price-label{font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;color:var(--structural)}
+.price-label .n{display:block;font-family:'Inter';font-weight:500;font-size:16px;color:var(--muted);margin-top:4px;letter-spacing:0.01em}
+.price-value{font-family:'Archivo',sans-serif;font-weight:800;font-size:34px;color:var(--structural);text-align:right;white-space:nowrap}
+.price-note{margin-top:22px;padding:18px 20px;background:#F3EEE4;border-radius:6px;font-size:16px;line-height:1.55;color:var(--text)}
+.price-note strong{color:var(--structural)}
+@media(max-width:640px){
+  .price-value{font-size:26px}
+  .price-label{font-size:19px}
+}
+
+/* === $25 OFFER BAND === */
+.offer{background:var(--structural);color:#fff;padding:48px 24px}
+.offer-in{max-width:900px;margin:0 auto}
+.offer h2{color:#fff;margin-bottom:14px}
+.offer p{color:#E5E0D8;font-size:19px;max-width:56ch;margin-bottom:0}
+.offer .fine{color:#B8B2A8;font-size:15px;margin-top:14px}
+
+/* === 3-STEP === */
+.steps{padding:64px 24px}
+.steps-in{max-width:1100px;margin:0 auto}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:32px}
+.step{padding-left:0}
+.step .n{font-family:'Archivo',sans-serif;font-weight:800;font-size:44px;color:var(--structural);line-height:1;margin-bottom:12px}
+.step h3{margin-bottom:8px}
+.step p{color:var(--text);font-size:16px;line-height:1.55;margin-bottom:0}
+@media(max-width:720px){.steps-grid{grid-template-columns:1fr;gap:24px}}
+
+/* === TRUST ROW (plain text) === */
+.trust{background:var(--bg);border-top:1px solid var(--divider);border-bottom:1px solid var(--divider);padding:24px}
+.trust-in{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;color:var(--structural);font-size:16px;font-weight:600}
+.trust-in span{white-space:nowrap}
+@media(max-width:640px){.trust-in{gap:14px 22px;font-size:15px}}
+
+/* === SERVICES (2-col text list) === */
+.svc{padding:64px 24px}
+.svc-in{max-width:1100px;margin:0 auto}
+.svc h2{margin-bottom:14px}
+.svc p.lead{color:var(--text);font-size:19px;max-width:60ch;margin-bottom:32px}
+.svc-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px 48px}
+.svc-cols div{padding:14px 0;border-bottom:1px solid var(--divider);font-size:18px;color:var(--text)}
+.svc-cols div strong{display:block;font-family:'Archivo',sans-serif;font-weight:700;color:var(--structural);font-size:19px;margin-bottom:4px}
+.svc-cols div .n{font-size:15px;color:var(--muted);line-height:1.5}
+@media(max-width:640px){.svc-cols{grid-template-columns:1fr;gap:0}}
+
+/* === MEET DANNY === */
+.meet{background:var(--bg);border-top:1px solid var(--divider);border-bottom:1px solid var(--divider);padding:56px 24px}
+.meet-in{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:center}
+.meet-photo{width:220px;height:220px;object-fit:cover;border-radius:8px}
+.meet-body h2{margin-bottom:12px}
+.meet-body p{color:var(--text);font-size:18px;line-height:1.6;max-width:56ch}
+.meet-body .sig{color:var(--structural);font-family:'Archivo',sans-serif;font-size:18px;font-weight:700;margin-top:14px}
+@media(max-width:640px){
+  .meet-in{grid-template-columns:1fr;gap:24px}
+  .meet-photo{width:180px;height:180px}
+}
+
+/* === HOW-IT-WORKS DARK BAND (Fixer send-photo/price/done) === */
+.how{background:var(--structural);color:#F3EEE4;padding:64px 24px}
+.how-in{max-width:1100px;margin:0 auto}
+.how h2{color:#fff}
+.how .lead{color:#E5E0D8;font-size:19px;max-width:56ch;margin:14px 0 32px 0}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:32px}
+.how-card{border-left:3px solid var(--divider);padding:6px 0 6px 22px}
+.how-card .k{font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;color:#E5E0D8;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px}
+.how-card h3{color:#fff;margin-bottom:8px}
+.how-card p{color:#E5E0D8;font-size:16px;line-height:1.6;margin-bottom:0}
+@media(max-width:820px){.how-grid{grid-template-columns:1fr;gap:20px}}
+
+/* === PHOTO GALLERY (16 real remodel photos) === */
+.gal{padding:64px 24px}
+.gal-in{max-width:1200px;margin:0 auto}
+.gal h2{margin-bottom:14px}
+.gal p.lead{color:var(--text);font-size:19px;max-width:60ch;margin-bottom:32px}
+.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.gal-tile{aspect-ratio:1;background:var(--divider);border-radius:6px;overflow:hidden;position:relative}
+.gal-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 200ms}
+.gal-tile:hover img{transform:scale(1.03)}
+@media(max-width:900px){.gal-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.gal-grid{grid-template-columns:repeat(2,1fr);gap:8px}}
+
+/* === REVIEWS === */
+.rv{padding:64px 24px}
+.rv-in{max-width:1100px;margin:0 auto}
+.rv h2{margin-bottom:14px}
+.rv p.lead{color:var(--text);font-size:19px;max-width:60ch;margin-bottom:32px}
+.rv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.rv-card{background:var(--bg);border:1px solid var(--divider);border-radius:6px;padding:24px}
+.rv-stars{color:var(--structural);font-size:18px;letter-spacing:2px;margin-bottom:12px;font-weight:700}
+.rv-quote{color:var(--text);font-size:17px;line-height:1.55;margin-bottom:14px}
+.rv-who{color:var(--muted);font-size:15px;font-weight:600}
+.rv-empty{background:#F3EEE4;border:1px solid var(--divider);border-radius:6px;padding:24px;color:var(--text);font-size:17px;line-height:1.6}
+.rv-empty a{color:var(--structural);font-weight:700}
+@media(max-width:820px){.rv-grid{grid-template-columns:1fr}}
+
+/* === QUICK LEAD FORM (3 fields) === */
+.form-band{background:var(--bg);border-top:1px solid var(--divider);border-bottom:1px solid var(--divider);padding:64px 24px}
+.form-in{max-width:720px;margin:0 auto}
+.form-in h2{margin-bottom:14px}
+.form-in p.lead{color:var(--text);font-size:19px;max-width:56ch;margin-bottom:28px}
+.field{margin-bottom:20px}
+.field label{display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;color:var(--structural);margin-bottom:8px;letter-spacing:0.02em}
+.field input,.field textarea{width:100%;padding:16px 18px;border:1.5px solid var(--divider);border-radius:6px;font-size:18px;font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);line-height:1.5}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--structural)}
+.field textarea{min-height:120px;resize:vertical}
+.form-status{margin-top:14px;font-size:16px;color:var(--structural);min-height:24px;font-weight:600}
+.form-status.err{color:#B85450}
+
+/* === FAQ === */
+.faq{padding:64px 24px}
+.faq-in{max-width:820px;margin:0 auto}
+.faq h2{margin-bottom:28px}
+.faq details{border-bottom:1px solid var(--divider);padding:20px 0}
+.faq details:last-of-type{border-bottom:none}
+.faq summary{list-style:none;cursor:pointer;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;color:var(--structural);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';color:var(--structural);font-size:26px;font-weight:400;transition:transform 200ms;font-family:'Inter'}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq .a{margin-top:14px;color:var(--text);font-size:17px;line-height:1.6}
+
+/* === FINAL CTA === */
+.final{padding:64px 24px;background:var(--bg);border-top:1px solid var(--divider)}
+.final-in{max-width:900px;margin:0 auto}
+.final h2{margin-bottom:14px}
+.final p{color:var(--text);font-size:19px;max-width:56ch;margin-bottom:24px}
+.final .ctas{display:flex;gap:14px;flex-wrap:wrap}
+
+/* === NOBLE GLITCH NETWORK BAND === */
+.nglnet{background:var(--bg);border-top:1px solid var(--divider);padding:64px 24px 24px}
+.nglnet-in{max-width:1100px;margin:0 auto}
+.nglnet .eyebrow{margin-bottom:14px}
+.nglnet h2{margin-bottom:14px}
+.nglnet p.lead{color:var(--text);font-size:18px;line-height:1.6;max-width:60ch;margin-bottom:32px}
+.nglnet .featured{background:#fff;border:1px solid var(--divider);border-radius:8px;padding:32px;margin-bottom:16px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.nglnet .featured .brand{font-family:'Archivo',sans-serif;font-weight:800;font-size:26px;color:var(--structural);margin-bottom:8px;letter-spacing:-0.01em}
+.nglnet .featured .brand a{color:var(--structural);text-decoration:none}
+.nglnet .featured .brand a:hover{text-decoration:underline;text-decoration-color:var(--structural)}
+.nglnet .featured .tag{font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;color:var(--structural);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px}
+.nglnet .featured .desc{color:var(--text);font-size:17px;line-height:1.55;max-width:56ch}
+.nglnet .featured .emerg{margin-top:14px;font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;color:var(--structural);letter-spacing:0.02em}
+.nglnet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.nglnet-card{background:#fff;border:1px solid var(--divider);border-radius:8px;padding:22px}
+.nglnet-card .name{font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;color:var(--structural);margin-bottom:8px;letter-spacing:-0.01em}
+.nglnet-card .name a{color:var(--structural);text-decoration:none}
+.nglnet-card .name a:hover{text-decoration:underline;text-decoration-color:var(--structural)}
+.nglnet-card p{color:var(--text);font-size:15px;line-height:1.5;margin-bottom:0}
+@media(max-width:900px){.nglnet-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){
+  .nglnet-grid{grid-template-columns:1fr}
+  .nglnet .featured{grid-template-columns:1fr;padding:24px}
+}
+
+/* === FOOTER === */
+.ft{background:var(--structural);color:#E5E0D8;padding:56px 24px 28px}
+.ft-in{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px}
+.ft h4{color:#fff;font-family:'Archivo',sans-serif;font-size:15px;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px}
+.ft a,.ft li{display:block;color:#E5E0D8;font-size:16px;line-height:1.9;text-decoration:none;list-style:none}
+.ft a:hover{color:#fff}
+.ft .biz{font-family:'Archivo',sans-serif;font-weight:700;font-size:20px;color:#fff;margin-bottom:10px}
+.ft .tag{color:#E5E0D8;font-size:15px;line-height:1.6;max-width:36ch}
+.ft .fine{grid-column:1/-1;padding-top:24px;margin-top:24px;border-top:1px solid rgba(255,255,255,0.12);color:#B8B2A8;font-size:14px;line-height:1.7}
+@media(max-width:820px){.ft-in{grid-template-columns:1fr 1fr;gap:28px}}
+@media(max-width:480px){.ft-in{grid-template-columns:1fr}}
+
+/* === MOBILE STICKY BOTTOM CALL BAR === */
+.mobile-call{display:none;position:fixed;bottom:0;left:0;right:0;z-index:70;background:var(--bg);border-top:1px solid var(--divider);padding:12px 16px;box-shadow:0 -2px 8px rgba(31,41,51,0.06)}
+.mobile-call a{display:block;width:100%;background:var(--cta);color:#fff;text-align:center;padding:16px;border-radius:4px;font-family:'Archivo',sans-serif;font-weight:700;font-size:18px;text-decoration:none}
+.mobile-call a:hover{background:#C24700}
+@media(max-width:640px){
+  .mobile-call{display:block}
+  body{padding-bottom:80px}
+}
+</style>
+</head>
+<body>
+
+<!-- STICKY HEADER: name left, tel right -->
+<header class="hdr">
+  <div class="hdr-in">
+    <a href="/" class="biz">Danny McKay Handyman<small>Tucson · handytucson.tech</small></a>
+    <div class="rt">
+      <a href="tel:5206750005" class="tel">(520) 675-0005</a>
+      <a href="/portal/signup" class="cta">Book Danny</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <h1>Tucson home fixes, simplified.</h1>
+      <p class="lead">Click. Book. Fixed. Danny's your neighbor — a real Tucson handyman who shows up on time, gives you the price up front, and stands behind the work. Serving mobile-home parks, HOAs, and homeowners metro-wide.</p>
+      <div class="offer-line"><strong>$25 off your first job.</strong> Applied automatically when you book through this page.</div>
+      <div class="ctas">
+        <a href="/portal/signup" class="cta cta-lg">Book Danny Now</a>
+        <a href="tel:5206750005" class="cta cta-lg" style="background:var(--structural)">Call (520) 675-0005</a>
+      </div>
+      <div class="meta">
+        <span>✓ Insured</span>
+        <span>✓ 90-day warranty</span>
+        <span>✓ AZ handyman-exempt</span>
+        <span>✓ Fixed price up front</span>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="/img/danny2.jpg?v=1" alt="Danny McKay building an accessibility ramp at a Tucson mobile home, Catalina Mountains in background">
+      <div class="cap">Real Tucson · real work</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING BAND -->
+<section class="price" id="pricing">
+  <div class="price-in">
+    <div class="eyebrow">Honest pricing</div>
+    <h2>What Danny charges.</h2>
+    <div style="margin-top:32px">
+      <div class="price-row">
+        <div class="price-label">Estimates<span class="n">Free, no obligation, no trip charge.</span></div>
+        <div class="price-value">$0</div>
+      </div>
+      <div class="price-row">
+        <div class="price-label">Standard rate<span class="n">One-hour minimum. Most jobs land in one to three hours.</span></div>
+        <div class="price-value">$75 / hour</div>
+      </div>
+      <div class="price-row">
+        <div class="price-label">After-hours &amp; emergency<span class="n">Nights, weekends, holidays. Standard rate plus 75%.</span></div>
+        <div class="price-value">$131 / hour</div>
+      </div>
+    </div>
+    <div class="price-note"><strong>How this works:</strong> Estimates are free. If you approve the work, the clock starts at the one-hour minimum — so nobody argues at the doorstep about a 20-minute job.</div>
+  </div>
+</section>
+
+<!-- $25 OFFER BAND -->
+<section class="offer">
+  <div class="offer-in">
+    <div class="eyebrow" style="color:#E5E0D8">New neighbor offer</div>
+    <h2>$25 off your first job.</h2>
+    <p>Mention this page when you call, or book through the form below and the discount is applied automatically. No coupon code, no hoops, no expiration.</p>
+    <p class="fine">One discount per household. Applies to standard-rate work, not to after-hours minimums.</p>
+  </div>
+</section>
+
+<!-- 3-STEP -->
+<section class="steps">
+  <div class="steps-in">
+    <div class="eyebrow">How it works</div>
+    <h2>Three steps to a fixed home.</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="n">1</div>
+        <h3>Book online in 60 seconds</h3>
+        <p>Sign up, pick a slot on Danny's live calendar, and tell him what's wrong. Send a photo if it helps.</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h3>Danny shows up on time</h3>
+        <p>Real confirmation text, real ETA, real Tucson handyman on your doorstep — not a call center passing you around.</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h3>Fixed, warrantied, done</h3>
+        <p>Fixed price agreed before any tool comes out. 90-day workmanship warranty. Signed paperwork, digital invoice, easy payment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST ROW -->
+<section class="trust">
+  <div class="trust-in">
+    <span>✓ Fully insured</span>
+    <span>✓ 90-day workmanship warranty</span>
+    <span>✓ AZ ROC handyman exemption § 32-1121(A)(14)</span>
+    <span>✓ Local, family-run</span>
+    <span>✓ Written estimates</span>
+  </div>
+</section>
+
+<!-- SERVICES (2-col text list) -->
+<section class="svc" id="services">
+  <div class="svc-in">
+    <div class="eyebrow">What Danny does</div>
+    <h2>Small jobs. Fair prices. One trusted handyman.</h2>
+    <p class="lead">Six focus areas covering the everyday fixes Tucson homes actually need. Not on the list? Just ask — chances are it's on Danny's list.</p>
+    <div class="svc-cols">
+      <div><strong>Plumbing &amp; faucets</strong><div class="n">Leaky faucets · garbage disposals · shut-off valves · caulking &amp; sealing · toilet fill valves.</div></div>
+      <div><strong>Electrical &amp; lighting</strong><div class="n">Ceiling fan swaps · light fixtures · outlet &amp; switch replace · smoke detector batteries · bulb changes.</div></div>
+      <div><strong>Doors, locks &amp; cabinets</strong><div class="n">Deadbolt install · sticky doors · cabinet &amp; drawer repair · screen door fixes · lock rekey.</div></div>
+      <div><strong>Mobile-home &amp; HOA specialists</strong><div class="n">Skirting repair · awning fixes · weatherproofing · HOA-compliant paint touch-ups · park-approved installs.</div></div>
+      <div><strong>Safety &amp; aging-in-place</strong><div class="n">Grab bar install · handrails · threshold ramps · non-slip strips · reachable lighting.</div></div>
+      <div><strong>General repair &amp; assembly</strong><div class="n">TV &amp; art hanging · furniture assembly · drywall patch · AC filter changes · fence &amp; gate fixes.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MEET DANNY -->
+<section class="meet">
+  <div class="meet-in">
+    <img src="/img/danny.jpg?v=3" alt="Danny McKay" class="meet-photo">
+    <div class="meet-body">
+      <div class="eyebrow">Meet Danny</div>
+      <h2>Your neighbor with the tool belt.</h2>
+      <p>Danny lives here, works here, raises a family here. When you call, you're not routed to a dispatcher — you're talking to the guy who's going to show up at your door. One handyman, one truck, one honest name behind the work.</p>
+      <div class="sig">— Danny McKay</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW-IT-WORKS DARK BAND -->
+<section class="how" id="how">
+  <div class="how-in">
+    <div class="eyebrow" style="color:#E5E0D8">The Danny difference</div>
+    <h2>Text a photo. Get a fixed price. Watch it get done.</h2>
+    <p class="lead">No surprise fees, no clipboard-toting "assessors" charging just to look. Danny gives you a real number before he shows up.</p>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="k">Step 1</div>
+        <h3>Send a photo</h3>
+        <p>After you sign up, text or upload a photo of the problem. Danny reads it himself — no phone tree.</p>
+      </div>
+      <div class="how-card">
+        <div class="k">Step 2</div>
+        <h3>Get a fixed price</h3>
+        <p>Danny replies with a flat quote and available time slots. You approve — no work starts otherwise.</p>
+      </div>
+      <div class="how-card">
+        <div class="k">Step 3</div>
+        <h3>Get it done</h3>
+        <p>Danny shows up in the scheduled window, does the job, cleans up, texts you the invoice. 90-day warranty on the work.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO GALLERY -->
+<section class="gal" id="gallery">
+  <div class="gal-in">
+    <div class="eyebrow">Recent Tucson jobs</div>
+    <h2>Real work, real homes.</h2>
+    <p class="lead">A rolling gallery from Danny's calendar — remodels, repairs, stucco patches, and finishing work across mobile-home parks, HOAs, and Tucson homes.</p>
+    <div class="gal-grid">
+      <div class="gal-tile"><img src="/img/Nu2nSCR.jpg" alt="Kitchen and living remodel — before and after"></div>
+      <div class="gal-tile"><img src="/img/6QgLILF.jpg" alt="Exterior stucco patch"></div>
+      <div class="gal-tile"><img src="/img/6wxSo5f.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/Dnb0ifK.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/IdtCqjh.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/PPtMpSw.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/UWytpSd.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/WDC5bAK.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/a2Oy2uA.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/dZdkKla.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/eYyDDKp.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/iaq07qX.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/kx7ZwaG.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/q9LML1u.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/x6InXpM.jpg" alt="Recent Tucson job"></div>
+      <div class="gal-tile"><img src="/img/y6fe6FU.jpg" alt="Recent Tucson job"></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="rv" id="reviews">
+  <div class="rv-in">
+    <div class="eyebrow">Neighbors say</div>
+    <h2>What Tucson customers write about Danny.</h2>
+    <p class="lead">Danny sends a review request 90 minutes after every completed job. Every review here is a verified Tucson customer.</p>
+    <div class="rv-grid" id="reviews-live"></div>
+    <div class="rv-empty" id="reviews-empty">
+      Danny's just started collecting reviews the honest way — from real customers after every completed job. Already worked with Danny? <a href="/portal/login">Sign in to leave a review →</a>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK LEAD FORM (3 fields) -->
+<section class="form-band" id="contact">
+  <div class="form-in">
+    <div class="eyebrow">Free estimate</div>
+    <h2>Tell Danny what's wrong.</h2>
+    <p class="lead">Three fields, one minute. Danny reads it himself and texts back a fixed price. $25 off automatically applied if this is your first job.</p>
+    <form id="leadForm" onsubmit="event.preventDefault(); submitLead();">
+      <input type="hidden" name="source" value="web-offer">
+      <div class="field">
+        <label for="l_name">Name</label>
+        <input id="l_name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="l_phone">Phone</label>
+        <input id="l_phone" name="phone" type="tel" autocomplete="tel" placeholder="(520) 555-0123" required>
+      </div>
+      <div class="field">
+        <label for="l_desc">What's wrong?</label>
+        <textarea id="l_desc" name="description" placeholder="A short description — Danny reads it himself." required></textarea>
+      </div>
+      <button type="submit" class="cta cta-lg" id="l_btn">Get my free estimate</button>
+      <div class="form-status" id="l_status"></div>
+    </form>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="faq-in">
+    <div class="eyebrow">Common questions</div>
+    <h2>Everything you might be wondering.</h2>
+    <details>
+      <summary>How much does Danny charge?</summary>
+      <div class="a">$75/hour with a one-hour minimum for standard-rate work (weekdays, daytime). After-hours (nights, weekends, holidays) is $131/hour. Estimates are always free — text a photo of what you need done, you'll get a fixed price before anyone rolls out.</div>
+    </details>
+    <details>
+      <summary>Do you serve mobile-home parks and HOAs?</summary>
+      <div class="a">Yes — this is Danny's specialty. He knows single-wide layouts, park skirting rules, and HOA paint-approval processes across Tucson, Oro Valley, Sahuarita, Marana, and Green Valley. If your park or community has a preferred-vendor list, ask about getting Danny added.</div>
+    </details>
+    <details>
+      <summary>Are you insured?</summary>
+      <div class="a">Fully covered by general liability insurance. Certificate of insurance available on request — some HOAs need it on file before work starts. Just ask.</div>
+    </details>
+    <details>
+      <summary>Do you offer a warranty?</summary>
+      <div class="a">Every job comes with a 90-day workmanship warranty. If something Danny installed or repaired fails within 90 days from workmanship (not from a separate cause), he'll come back and fix it at no charge.</div>
+    </details>
+    <details>
+      <summary>What jobs are too big for a handyman?</summary>
+      <div class="a">Under Arizona ROC handyman exemption A.R.S. § 32-1121(A)(14), Danny works on jobs under $1,000 (materials + labor combined) that don't require a specialty contractor license. For bigger jobs (whole-home rewires, HVAC installs, roof replacements, structural work), he'll refer you to a licensed contractor he trusts.</div>
+    </details>
+    <details>
+      <summary>What if my job runs longer than the estimate?</summary>
+      <div class="a">Danny gives you a fixed price before starting, based on his estimate of the job. If he hits something unexpected mid-job, he pauses and tells you — you decide whether to keep going (with a revised quote) or stop there. No surprise bills.</div>
+    </details>
+    <details>
+      <summary>How do I pay?</summary>
+      <div class="a">You'll get a digital invoice with a payment link. Card, ACH, or Venmo/Zelle all accepted. Pay when the work is done — no deposits required for most jobs under $500.</div>
+    </details>
+    <details>
+      <summary>How fast can Danny get to me?</summary>
+      <div class="a">Same-week is the norm. Emergencies (leaks, lockouts, no-AC-in-July) get after-hours slots at $131/hour. Danny's a solo operator with a real calendar — you'll always see what's actually available.</div>
+    </details>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="final-in">
+    <h2>Ready when you are.</h2>
+    <p>Sign up in under 2 minutes, book a slot on Danny's calendar, and cross one thing off your list this week.</p>
+    <div class="ctas">
+      <a href="/portal/signup" class="cta cta-lg">Book Danny Now</a>
+      <a href="tel:5206750005" class="cta cta-lg" style="background:var(--structural)">Call (520) 675-0005</a>
+    </div>
+  </div>
+</section>
+
+<!-- NOBLE GLITCH NETWORK -->
+<section class="nglnet">
+  <div class="nglnet-in">
+    <div class="eyebrow">Part of the Noble Glitch network</div>
+    <h2>Built and run by Noble Glitch.</h2>
+    <p class="lead">Danny's site is one of several Tucson-first tools built by Noble Glitch — a solo-operator software shop putting real digital muscle behind local businesses and everyday Tucsonans.</p>
+
+    <div class="featured">
+      <div>
+        <div class="tag">The mothership</div>
+        <div class="brand"><a href="https://nobleglitch.com" target="_blank" rel="noopener">nobleglitch.com</a></div>
+        <div class="desc">Tucson's one-stop digital solo operator. Full-stack development, software engineering, and rapid response — one operator, one number, one honest name behind the code.</div>
+        <div class="emerg">Anything tech · quick reaction · emergency response → call Noble</div>
+      </div>
+      <div>
+        <a href="https://nobleglitch.com" target="_blank" rel="noopener" class="cta">Visit nobleglitch.com →</a>
+      </div>
+    </div>
+
+    <div class="nglnet-grid">
+      <div class="nglnet-card">
+        <div class="name"><a href="https://findasafeplace.com" target="_blank" rel="noopener">findasafeplace.com</a></div>
+        <p>Free neighborhood safety intel for Tucson movers, buyers, and renters. Real data, honest scores, privacy-first by design.</p>
+      </div>
+      <div class="nglnet-card">
+        <div class="name"><a href="https://aipetlocater.com" target="_blank" rel="noopener">aipetlocater.com</a></div>
+        <p>Tucson's own AI-powered pet finder — Gemini scans 18,000 shelters plus Facebook groups doing the hard work of the search, so you can stay with your family while we bring yours home.</p>
+      </div>
+      <div class="nglnet-card">
+        <div class="name"><a href="https://tucsonstreets.com" target="_blank" rel="noopener">tucsonstreets.com</a></div>
+        <p>Tucson's live 3D "what's happening" map — real-time emergency response, downtown concerts, community alerts, and business listings. Kids play cop with real-world CAD data and hunt for Arya the K9.</p>
+      </div>
+      <div class="nglnet-card">
+        <div class="name"><a href="https://tucsonlive.app" target="_blank" rel="noopener">tucsonlive.app</a></div>
+        <p>Free tools for Tucsonites — writer's studio, local guides, and neighborhood utilities built for the desert.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="ft">
+  <div class="ft-in">
+    <div>
+      <div class="biz">Danny McKay Handyman</div>
+      <p class="tag">Tucson's dedicated handyman for mobile-home communities, HOAs, and neighbors who just want it fixed right.</p>
+    </div>
+    <div>
+      <h4>Hours</h4>
+      <ul>
+        <li>Mon–Sat · 8am – 5pm</li>
+        <li>After-hours available</li>
+        <li>Emergency: nights, weekends, holidays</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Service area</h4>
+      <ul>
+        <li>Tucson</li>
+        <li>Oro Valley</li>
+        <li>Marana</li>
+        <li>Sahuarita</li>
+        <li>Green Valley</li>
+        <li>Vail</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <a href="tel:5206750005">(520) 675-0005</a>
+      <a href="sms:5206750005">Text Danny</a>
+      <a href="mailto:danny@handytucson.tech">danny@handytucson.tech</a>
+      <a href="/portal/login">Customer sign in</a>
+      <a href="/login">Owner sign in</a>
+    </div>
+    <div class="fine">
+      © <span id="year">2026</span> Danny McKay Handyman Services · Tucson, AZ · Fully insured.<br>
+      Operating under Arizona ROC handyman exemption A.R.S. § 32-1121(A)(14) for jobs under $1,000 (no separate contractor license required for exempt work).<br>
+      A part of the <a href="https://nobleglitch.com" target="_blank" rel="noopener" style="color:#fff">Noble Glitch</a> network · Tucson-built software.
+    </div>
+  </div>
+</footer>
+
+<!-- MOBILE STICKY BOTTOM CALL BAR -->
+<div class="mobile-call">
+  <a href="tel:5206750005">📞 Call Danny · (520) 675-0005</a>
+</div>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+
+// Load real verified reviews
+(async function(){
+  try{
+    const r=await fetch('/handy/api/reviews/public');
+    if(!r.ok) return;
+    const {reviews}=await r.json();
+    if(!reviews||!reviews.length) return;
+    const empty=document.getElementById('reviews-empty');
+    const wrap=document.getElementById('reviews-live');
+    empty.style.display='none';
+    const fmtName=(n,nb)=>{
+      const parts=(n||'').trim().split(/\s+/);
+      const first=parts[0]||'Neighbor';
+      const initial=parts.length>1?' '+parts[parts.length-1][0].toUpperCase()+'.':'';
+      return first+initial+(nb?' — '+nb:'');
+    };
+    wrap.innerHTML=reviews.slice(0,6).map(rv=>`
+      <div class="rv-card">
+        <div class="rv-stars">${'★'.repeat(rv.stars||5)}${'☆'.repeat(5-(rv.stars||5))}</div>
+        <div class="rv-quote">"${(rv.quote||'').replace(/[<>]/g,'')}"</div>
+        <div class="rv-who">${fmtName(rv.name,rv.neighborhood).replace(/[<>]/g,'')}</div>
+      </div>`).join('');
+  }catch(e){}
+})();
+
+// Submit quick lead form (3 fields + hidden source=web-offer)
+async function submitLead(){
+  const btn=document.getElementById('l_btn');
+  const status=document.getElementById('l_status');
+  status.className='form-status';status.textContent='';
+  btn.disabled=true;btn.textContent='Sending…';
+  const data={
+    name:document.getElementById('l_name').value.trim(),
+    phone:document.getElementById('l_phone').value.trim(),
+    description:document.getElementById('l_desc').value.trim(),
+    source:'web-offer'
+  };
+  try{
+    const r=await fetch('/handy/api/leads/quick',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const d=await r.json();
+    if(d.ok){
+      document.getElementById('leadForm').reset();
+      status.textContent='Got it. Danny will text you back within a few hours with a fixed price. $25 off applied automatically.';
+      btn.textContent='Get my free estimate';
+      btn.disabled=false;
+    }else{
+      status.className='form-status err';
+      status.textContent=d.error||'Something went wrong — please call (520) 675-0005.';
+      btn.textContent='Get my free estimate';
+      btn.disabled=false;
+    }
+  }catch(e){
+    status.className='form-status err';
+    status.textContent='Network hiccup — please call (520) 675-0005 instead.';
+    btn.textContent='Get my free estimate';
+    btn.disabled=false;
+  }
+}
+</script>
+</body>
+</html>

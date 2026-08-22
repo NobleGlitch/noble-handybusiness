@@ -1,0 +1,44 @@
+{
+  "name": "noble-handybusiness",
+  "version": "1.0.0",
+  "description": "Handyman-business-in-a-box — Tucson-tested field-service platform for solo handymen, small crews, and family shops. Owner dashboard, assistant call console, customer portal, PDF invoicing, appointment reminders, review automation, TCPA-compliant SMS. Part of the Noble Glitch network.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "handyman",
+    "field-service",
+    "small-business",
+    "invoicing",
+    "sms",
+    "signalwire",
+    "twilio",
+    "paypal",
+    "sqlite",
+    "self-hosted",
+    "noble-glitch"
+  ],
+  "author": "Noble Glitch (https://nobleglitch.com)",
+  "license": "MIT",
+  "homepage": "https://github.com/NobleGlitch/noble-handybusiness",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NobleGlitch/noble-handybusiness.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NobleGlitch/noble-handybusiness/issues"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "better-sqlite3": "^11.3.0",
+    "better-sqlite3-session-store": "^0.1.0",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "pdfkit": "^0.15.0"
+  }
+}

@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Handy Dashboard</title>
+<meta name="theme-color" content="#FAF6EF">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#FAF6EF;color:#2A2622;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:15px}
+body{display:flex;flex-direction:column;overflow:hidden}
+/* Colors */
+:root{--bg:#FAF6EF;--surface:#fff;--surface-2:#F3EEE4;--ink:#2A2622;--ink-soft:#6A6560;--hair:#E4DED2;--blue:#3B6E8F;--blue-ink:#29506A;--orange:#E8955A;--sage:#6B9F72;--clay:#B85450}
+/* Top bar */
+.topbar{padding:14px 20px;background:#fff;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.topbar .brand{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:18px;color:var(--ink)}
+.topbar .spacer{flex:1}
+.topbar .out{color:var(--ink-soft);font-size:13px;text-decoration:none;padding:6px 12px;border-radius:20px;border:1px solid var(--hair)}
+.topbar .out:hover{background:var(--surface-2)}
+/* Main content */
+.main{flex:1;overflow-y:auto;padding-bottom:80px;-webkit-overflow-scrolling:touch}
+.view{display:none;padding:20px}
+.view.on{display:block;animation:fade 200ms ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* Bottom nav (mobile) */
+.tabnav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--hair);display:grid;grid-template-columns:repeat(6,1fr);z-index:10;padding-bottom:env(safe-area-inset-bottom)}
+.tab{background:none;border:none;padding:10px 4px;font-family:inherit;font-size:10px;color:var(--ink-soft);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:0.03em;font-weight:500}
+.tab .ic{font-size:22px;line-height:1}
+.tab.on{color:var(--blue)}
+.tab.on .ic{color:var(--blue)}
+.tab{position:relative}
+.tab .reddot{position:absolute;top:6px;right:calc(50% - 18px);width:9px;height:9px;background:var(--clay);border-radius:50%;box-shadow:0 0 0 2px #fff;display:none}
+.tab .reddot.on{display:block}
+/* Ticket pill statuses + slot buttons */
+.pill.pending{background:rgba(232,149,90,.18);color:var(--orange)}
+.pill.accepted{background:var(--sage);color:#fff}
+.pill.declined{background:var(--surface-2);color:var(--ink-soft)}
+.pill.afterhours{background:var(--ink);color:#fff}
+.chip-row{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.chip{padding:8px 14px;border-radius:999px;border:1px solid var(--hair);background:#fff;color:var(--ink-soft);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:inherit}
+.chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.item.pending-ticket{border-left:3px solid var(--orange);padding-left:13px;background:#FFF8EE}
+.slot-btn{display:block;width:100%;padding:14px 12px;margin-bottom:8px;border:1.5px solid var(--hair);background:#fff;border-radius:10px;font-family:inherit;font-size:14px;cursor:pointer;text-align:left;color:var(--ink)}
+.slot-btn:hover{border-color:var(--blue);background:#F5F8FB}
+.slot-btn strong{display:block;font-family:'Fraunces',serif;font-size:17px;color:var(--blue);margin-bottom:2px}
+/* Cards */
+.card{background:var(--surface);border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(42,38,34,.04),0 2px 6px rgba(42,38,34,.03)}
+.card h2{font-family:'Fraunces',serif;font-size:17px;margin-bottom:8px;color:var(--ink)}
+.card h3{font-size:15px;font-weight:600;margin-bottom:10px}
+.card .k{color:var(--ink-soft);font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px;font-weight:500}
+.card .v{font-size:18px;font-weight:600;color:var(--ink)}
+.card .v.big{font-family:'Fraunces',serif;font-size:28px;font-weight:700}
+.card .v.sub{font-size:13px;color:var(--ink-soft);font-weight:400}
+/* Overview stat grid */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.stat{background:var(--surface);border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(42,38,34,.04)}
+.stat.blue{background:var(--blue);color:#fff}
+.stat.blue .k,.stat.blue .v{color:#fff}
+.stat.orange{background:var(--orange);color:#fff}
+.stat.orange .k,.stat.orange .v{color:#fff}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;border:1px solid transparent;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit;text-decoration:none;min-height:44px}
+.btn:hover{background:var(--blue-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--hair)}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.warm{background:var(--orange);color:#fff}
+.btn.sage{background:var(--sage);color:#fff}
+.btn.clay{background:var(--clay);color:#fff}
+.btn.sm{padding:6px 12px;font-size:12px;min-height:32px}
+.btn.block{width:100%}
+.btn.fab{position:fixed;bottom:88px;right:20px;width:56px;height:56px;border-radius:50%;font-size:24px;box-shadow:0 6px 20px rgba(59,110,143,.35);z-index:20;padding:0}
+/* Form */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1.5px solid var(--hair);border-radius:8px;font-size:15px;color:var(--ink);background:#fff;font-family:inherit;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--blue)}
+.field textarea{resize:vertical;min-height:80px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* Lists */
+.item{background:var(--surface);border-radius:10px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:background 120ms}
+.item:hover{background:var(--surface-2)}
+.item .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.item .name{font-weight:600;font-size:15px;color:var(--ink)}
+.item .meta{color:var(--ink-soft);font-size:12px;margin-top:2px}
+/* Customers get a warm hearth-orange treatment so they stand out from Jobs/Invoices */
+.item.customer{background:#FFF3E6;border-left:3px solid var(--orange);padding-left:13px;padding-top:14px;padding-bottom:14px}
+.item.customer:hover{background:#FDEAD3}
+.item.customer .cname{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:22px;color:#B96B33;line-height:1.15;margin-bottom:6px;display:block}
+.item.customer .cline{color:#7A4E2A;font-size:14px;margin-top:2px;font-weight:500}
+.item.customer .cline .ic{opacity:0.6;margin-right:4px}
+/* Contact card (detail modal) */
+.cc-header{background:linear-gradient(135deg,var(--orange) 0%,#B96B33 100%);color:#fff;margin:-24px -20px 20px;padding:24px 20px}
+.cc-header .cc-name{font-family:'Fraunces',serif;font-size:26px;font-weight:700;margin-bottom:6px}
+.cc-header .cc-contact{font-size:14px;opacity:0.95}
+.cc-header .cc-contact a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+.cc-money{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.cc-money .box{padding:14px;border-radius:10px;text-align:center}
+.cc-money .box.received{background:rgba(107,159,114,0.12);color:var(--sage)}
+.cc-money .box.owed{background:rgba(184,84,80,0.12);color:var(--clay)}
+.cc-money .box.owed.zero{background:var(--surface-2);color:var(--ink-soft)}
+.cc-money .box .k{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:4px;opacity:0.9}
+.cc-money .box .v{font-family:'Fraunces',serif;font-size:24px;font-weight:700}
+.cc-money .box .sub{font-size:11px;opacity:0.75;margin-top:2px}
+.cc-jobs h4{font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin:16px 0 8px;font-weight:600}
+.cc-job{padding:10px 12px;background:var(--surface-2);border-radius:8px;margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cc-job:hover{background:#EDE6D6}
+.cc-job .t{font-weight:600;font-size:14px}
+.cc-job .m{color:var(--ink-soft);font-size:12px;margin-top:2px}
+.cc-notes{background:#FFFCF5;border:1px dashed var(--hair);border-radius:8px;padding:12px 14px;font-size:14px;color:var(--ink);white-space:pre-wrap;margin-bottom:10px;line-height:1.5}
+/* Priority indicators for jobs */
+.prio-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.prio-urgent{background:var(--clay);box-shadow:0 0 8px var(--clay)}
+.prio-high{background:var(--orange)}
+.prio-normal{background:var(--blue)}
+.prio-low{background:var(--ink-soft);opacity:0.6}
+.item.prio-urgent-item{border-left:3px solid var(--clay);padding-left:13px;background:rgba(184,84,80,0.04)}
+.item.prio-high-item{border-left:3px solid var(--orange);padding-left:13px}
+.item .amount{font-weight:600;color:var(--blue);white-space:nowrap}
+.item.overdue{border-left:3px solid var(--clay);padding-left:13px}
+/* Pills */
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.pill.draft{background:var(--surface-2);color:var(--ink-soft)}
+.pill.sent{background:rgba(59,110,143,.12);color:var(--blue)}
+.pill.overdue{background:var(--clay);color:#fff}
+.pill.paid{background:var(--sage);color:#fff}
+.pill.open{background:rgba(107,159,114,.12);color:var(--sage)}
+.pill.inprogress{background:rgba(232,149,90,.12);color:var(--orange)}
+.pill.complete{background:var(--sage);color:#fff}
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(42,38,34,.55);display:none;align-items:flex-end;justify-content:center;z-index:100;padding:20px;padding-bottom:0}
+.modal.on{display:flex;animation:fade 200ms}
+.modal .sheet{background:#fff;border-radius:16px 16px 0 0;padding:24px 20px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+.modal .sheet h2{font-family:'Fraunces',serif;font-size:20px;margin-bottom:14px}
+/* AI chat */
+.chat-list{padding:16px 4px 8px;overflow-y:auto;max-height:calc(100vh - 260px)}
+.chat-msg{max-width:85%;padding:12px 14px;border-radius:16px;margin-bottom:8px;font-size:14px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+.chat-msg.you{background:var(--blue);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.chat-msg.ai{background:var(--surface);color:var(--ink);border-bottom-left-radius:4px;box-shadow:0 1px 2px rgba(42,38,34,.04)}
+.chat-input-row{display:flex;gap:8px;padding:12px;background:#fff;border-top:1px solid var(--hair);position:sticky;bottom:0}
+.chat-input-row input{flex:1;padding:12px 14px;border:1.5px solid var(--hair);border-radius:24px;font-size:15px;background:#FAF6EF}
+.chat-input-row button{width:44px;height:44px;border-radius:50%;font-size:20px;padding:0;flex-shrink:0}
+/* Attachment grid — photos + documents */
+.att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px}
+.att{position:relative;aspect-ratio:1;border-radius:8px;background:var(--surface-2);cursor:pointer;overflow:hidden;border:1px solid var(--hair);display:flex;align-items:center;justify-content:center}
+.att img{width:100%;height:100%;object-fit:cover;display:block}
+.att.doc{flex-direction:column;padding:6px;text-align:center;background:#F5EFE0}
+.att.doc .doc-ic{font-size:32px;line-height:1}
+.att.doc .doc-nm{font-size:9px;color:var(--ink-soft);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;font-family:monospace}
+.att .rm{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);color:#fff;width:22px;height:22px;border-radius:50%;border:none;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 150ms}
+.att:hover .rm,.att .rm.always{opacity:1}
+.att-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.att-btn{flex:1;min-width:120px;padding:12px;background:var(--surface);border:1.5px dashed var(--hair);border-radius:8px;color:var(--ink);cursor:pointer;font-size:13px;font-weight:500;text-align:center;font-family:inherit}
+.att-btn:hover{border-color:var(--blue);color:var(--blue)}
+.att-btn input{display:none}
+/* Utility */
+.empty{text-align:center;color:var(--ink-soft);padding:40px 20px;font-size:14px}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity 200ms;z-index:150}
+.toast.on{opacity:1}
+.sec-title{font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px;font-weight:600}
+.dot-sep{color:var(--hair);margin:0 6px}
+/* Desktop tweaks */
+@media (min-width:900px){
+  .tabnav{position:fixed;top:56px;bottom:0;left:0;right:auto;width:80px;grid-template-columns:1fr;grid-auto-rows:min-content;padding:12px 0;border-top:none;border-right:1px solid var(--hair)}
+  .tab{padding:14px 4px;font-size:11px}
+  .main{padding-left:80px;padding-bottom:20px}
+  .btn.fab{bottom:24px;right:24px}
+  .stat-grid{grid-template-columns:repeat(4,1fr)}
+  .view{padding:24px 32px;max-width:1200px;margin:0 auto}
+}
+/* ── LEGAL PROTECTION WIDGET ── warm-cream card, hearth-orange border-left */
+.legal-card{background:#FFFBF3;border-radius:12px;padding:18px 20px;margin:6px 0 18px;border-left:5px solid var(--orange);box-shadow:0 1px 2px rgba(42,38,34,.04),0 2px 8px rgba(232,149,90,.08);position:relative}
+.legal-disclaimer{font-size:11px;color:var(--ink-soft);font-style:italic;margin-bottom:10px;letter-spacing:0.02em;line-height:1.4}
+.legal-topline{display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.legal-chip{display:inline-block;background:rgba(59,110,143,.10);color:var(--blue-ink);font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.legal-chip.protocol{background:rgba(107,159,114,.14);color:#3F6844}
+.legal-chip.court_prep{background:rgba(59,110,143,.14);color:var(--blue-ink)}
+.legal-chip.collection{background:rgba(232,149,90,.18);color:#8A4A1F}
+.legal-chip.compliance{background:rgba(184,84,80,.14);color:#7A2E2B}
+.legal-chip.legal_update{background:rgba(42,38,34,.10);color:var(--ink)}
+.legal-sev{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em}
+.legal-sev .dot{width:8px;height:8px;border-radius:50%;background:var(--ink-soft);display:inline-block}
+.legal-sev.info .dot{background:var(--sage)}
+.legal-sev.important .dot{background:var(--orange)}
+.legal-sev.critical .dot{background:var(--clay);box-shadow:0 0 0 3px rgba(184,84,80,.18)}
+.legal-sev.info{color:#3F6844}
+.legal-sev.important{color:#8A4A1F}
+.legal-sev.critical{color:var(--clay)}
+.legal-headline{font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:700;color:var(--ink);line-height:1.28;margin:2px 0 8px}
+.legal-body{font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);line-height:1.55;margin-bottom:10px}
+.legal-citation{font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:11px;font-style:italic;color:var(--ink-soft);margin-bottom:10px;padding:6px 10px;background:rgba(42,38,34,.04);border-radius:6px;display:inline-block}
+.legal-action{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--blue-ink);margin-bottom:14px;line-height:1.4}
+.legal-action::before{content:"→ ";color:var(--orange);font-weight:700}
+.legal-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.legal-link{color:var(--blue);font-size:13px;font-weight:600;text-decoration:none;border-bottom:1px dotted var(--blue)}
+.legal-link:hover{color:var(--blue-ink)}
+/* Library modal */
+.legal-lib-group{margin-bottom:20px}
+.legal-lib-group h4{font-family:'Fraunces',serif;font-size:15px;color:var(--ink);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--hair);text-transform:capitalize}
+.legal-lib-item{padding:10px 12px;background:#FFFBF3;border-left:3px solid var(--orange);border-radius:6px;margin-bottom:8px}
+.legal-lib-item .h{font-family:'Fraunces',serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3}
+.legal-lib-item .c{font-family:'SFMono-Regular',Menlo,monospace;font-size:10px;font-style:italic;color:var(--ink-soft)}
+.legal-lib-item.critical{border-left-color:var(--clay)}
+.legal-lib-item.important{border-left-color:var(--orange)}
+.legal-lib-item.info{border-left-color:var(--sage)}
+/* ── ASSISTANT TO-DO LIST (Home tab "today's punch list") ── */
+.todo-card{background:linear-gradient(135deg,#FFF8EE 0%,#FFF3E0 100%);border-radius:14px;padding:18px 20px 8px;margin-bottom:18px;border-left:5px solid var(--orange);box-shadow:0 1px 2px rgba(42,38,34,.04),0 2px 12px rgba(232,149,90,.10)}
+.todo-card h2{font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:2px;line-height:1.25}
+.todo-card .sub{font-size:12px;color:var(--ink-soft);margin-bottom:12px;font-weight:500}
+.todo-card .empty{padding:16px 4px;color:var(--ink-soft);font-size:13px;text-align:left}
+.todo-item{display:flex;align-items:flex-start;gap:12px;padding:12px 12px;margin:0 -6px 6px;border-radius:10px;cursor:pointer;background:#fff;border:1px solid rgba(232,149,90,0.14);transition:background 120ms,border-color 120ms}
+.todo-item:hover{background:#FFFBF3;border-color:var(--orange)}
+.todo-item .ic{font-size:22px;line-height:1.1;flex-shrink:0;margin-top:1px}
+.todo-item .body{flex:1;min-width:0}
+.todo-item .headline{font-size:14px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:2px}
+.todo-item .detail{font-size:12px;color:var(--ink-soft);line-height:1.4}
+.todo-item .arr{color:var(--ink-soft);font-size:16px;margin-left:6px;flex-shrink:0}
+.todo-item.urgent{border-left:3px solid var(--clay);background:rgba(184,84,80,0.03)}
+.todo-item.warn{border-left:3px solid var(--orange)}
+.todo-item.info{border-left:3px solid var(--blue)}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand" id="brandName">Handy</span>
+  <span class="spacer"></span>
+  <a href="/handy/assistant" class="out" style="margin-right:14px">Call console →</a>
+  <a href="/handy/logout" class="out">Sign out</a>
+</header>
+
+<main class="main" id="main">
+
+<!-- HOME / OVERVIEW -->
+<section class="view on" data-view="home">
+  <!-- ⚡ Quick Charge — one-tap post-job flow -->
+  <a href="/handy/quick-charge" style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,var(--orange) 0%,#B96B33 100%);color:#fff;border-radius:14px;padding:18px 20px;margin-bottom:14px;text-decoration:none;box-shadow:0 6px 20px rgba(232,149,90,.28)">
+    <div>
+      <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;line-height:1.15">⚡ Quick Charge</div>
+      <div style="font-size:12px;opacity:0.9;margin-top:3px">Finish a job + invoice in 60 seconds. From the driveway.</div>
+    </div>
+    <div style="font-size:26px;line-height:1">→</div>
+  </a>
+
+  <!-- ASSISTANT TO-DO LIST — hidden until data loads with real items -->
+  <article class="todo-card" id="todoCard" style="display:none">
+    <h2>Your assistant list — today's punch list</h2>
+    <div class="sub">Real work pulled from your own data. Tap any item to jump to it.</div>
+    <div id="todoList"></div>
+  </article>
+
+  <div class="sec-title">This week</div>
+  <div class="stat-grid" id="stats"></div>
+
+  <!-- LEGAL PROTECTION WIDGET (Arizona / Pima County) -->
+  <article class="legal-card" id="legalCard" aria-live="polite">
+    <div class="legal-disclaimer">General info about Arizona law, not legal advice for your specific matter.</div>
+    <div class="legal-topline">
+      <span class="legal-chip" id="legalChip">…</span>
+      <span class="legal-sev" id="legalSev"><span class="dot"></span><span class="lbl">loading</span></span>
+    </div>
+    <h3 class="legal-headline" id="legalHeadline">Loading today's protection tip…</h3>
+    <p class="legal-body" id="legalBody">Pulling from the Arizona / Pima County handyman-law library.</p>
+    <div class="legal-citation" id="legalCitation"></div>
+    <div class="legal-action" id="legalAction"></div>
+    <div class="legal-actions">
+      <button class="btn sm warm" type="button" onclick="loadLegalTip(true)">Next tip →</button>
+      <a class="legal-link" href="#" onclick="event.preventDefault();openLegalLibrary()">See all tips</a>
+    </div>
+  </article>
+
+  <h2 style="font-family:'Fraunces',serif;font-size:18px;margin:20px 0 10px">Late payments</h2>
+  <div id="overdueList"></div>
+
+  <h2 style="font-family:'Fraunces',serif;font-size:18px;margin:20px 0 10px">Coming up</h2>
+  <div id="upcomingList"></div>
+</section>
+
+<!-- SCHEDULE / JOB MAP -->
+<section class="view" data-view="schedule" style="padding:0">
+  <div style="padding:16px 20px 0">
+    <div id="nextJobCard" style="background:linear-gradient(135deg,var(--blue) 0%,var(--blue-ink) 100%);color:#fff;border-radius:12px;padding:16px 18px;margin-bottom:14px">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;opacity:0.85;margin-bottom:6px">NEXT JOB</div>
+      <div id="njLoading">Loading…</div>
+    </div>
+    <div id="dayChips" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch"></div>
+  </div>
+  <div id="mapArea" style="height:340px;background:var(--surface-2);position:relative;overflow:hidden">
+    <div id="mapContainer" style="width:100%;height:100%"></div>
+    <div id="mapPlaceholder" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--ink-soft);gap:8px;padding:20px;text-align:center">
+      <div style="font-size:32px">🗺️</div>
+      <div style="font-size:13px">Loading map…</div>
+    </div>
+  </div>
+  <div id="scheduleList" style="padding:14px 20px 20px"></div>
+</section>
+
+<!-- TICKETS (customer booking inbox) -->
+<section class="view" data-view="tickets">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <h2 style="font-family:'Fraunces',serif;font-size:20px">Tickets</h2>
+    <button class="btn sm ghost" onclick="loadTickets()">↻ Refresh</button>
+  </div>
+  <div class="chip-row" id="ticketChips">
+    <button class="chip on" data-filter="all">All</button>
+    <button class="chip" data-filter="pending">Pending</button>
+    <button class="chip" data-filter="accepted">Accepted</button>
+    <button class="chip" data-filter="declined">Declined</button>
+  </div>
+  <div id="ticketList"></div>
+</section>
+
+<!-- CUSTOMERS -->
+<section class="view" data-view="customers">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h2 style="font-family:'Fraunces',serif;font-size:20px">Customers</h2>
+    <button class="btn sm" onclick="openCust()">+ Add</button>
+  </div>
+  <input type="search" id="custSearch" placeholder="Search customers…" oninput="renderCustomers()" style="width:100%;padding:12px 14px;border:1.5px solid var(--hair);border-radius:8px;margin-bottom:14px;font-size:15px;background:#fff">
+  <div id="custList"></div>
+</section>
+
+<!-- JOBS -->
+<section class="view" data-view="jobs">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h2 style="font-family:'Fraunces',serif;font-size:20px">Jobs</h2>
+    <button class="btn sm" onclick="openJob()">+ New job</button>
+  </div>
+  <div id="jobList"></div>
+</section>
+
+<!-- INVOICES -->
+<section class="view" data-view="invoices">
+  <h2 style="font-family:'Fraunces',serif;font-size:20px;margin-bottom:16px">Invoices</h2>
+  <div id="invoiceList"></div>
+</section>
+
+<!-- CHAT (Noble AI) -->
+<section class="view" data-view="chat" style="padding:0;display:none;flex-direction:column;height:calc(100vh - 130px)">
+  <div style="padding:16px 20px;background:#fff;border-bottom:1px solid var(--hair)">
+    <h2 style="font-family:'Fraunces',serif;font-size:18px">Noble AI Chat</h2>
+    <div style="color:var(--ink-soft);font-size:12px;margin-top:2px">Brainstorm quotes, wording, or ask anything. Runs on The Noble Glitch's local AI.</div>
+  </div>
+  <div class="chat-list" id="chatList"></div>
+  <div class="chat-input-row">
+    <input id="chatInput" placeholder="Ask anything…" onkeypress="if(event.key==='Enter')sendChat()">
+    <button class="btn" onclick="sendChat()" id="chatSend">↑</button>
+  </div>
+</section>
+
+<!-- ME / SETTINGS -->
+<section class="view" data-view="me">
+  <h2 style="font-family:'Fraunces',serif;font-size:20px;margin-bottom:16px">Settings</h2>
+  <div class="card">
+    <h3>Business</h3>
+    <div class="field"><label>Your name</label><input id="s_display" type="text"></div>
+    <div class="field"><label>Business name</label><input id="s_biz" type="text"></div>
+    <div class="row2">
+      <div class="field"><label>Business phone</label><input id="s_bizphone" type="tel"></div>
+      <div class="field"><label>Business email</label><input id="s_bizemail" type="email"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Defaults</h3>
+    <div class="row2">
+      <div class="field"><label>Hourly rate ($)</label><input id="s_rate" type="number" step="0.01"></div>
+      <div class="field"><label>Material markup %</label><input id="s_markup" type="number" step="0.1"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Payment handles</h3>
+    <div class="field"><label>PayPal.me link</label><input id="s_paypal" type="text" placeholder="paypal.me/username"></div>
+    <div class="row2">
+      <div class="field"><label>Venmo @</label><input id="s_venmo" type="text" placeholder="@username"></div>
+      <div class="field"><label>Cash App $</label><input id="s_cashapp" type="text" placeholder="$username"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Home base (for map + drive times)</h3>
+    <div class="field"><label>Your home / shop address</label><input id="s_home" type="text" placeholder="e.g. 1234 E Broadway, Tucson AZ 85719"></div>
+    <p style="font-size:12px;color:var(--ink-soft);margin:0">Used only to calculate distance to jobs on the Route map. Never shown to customers.</p>
+  </div>
+  <div class="card">
+    <h3>Google review link</h3>
+    <div class="field"><label>Your Google Business review URL</label><input id="s_gmb" type="text" placeholder="https://g.page/r/…/review"></div>
+    <p style="font-size:12px;color:var(--ink-soft);margin:0">When set, we'll text the customer 90 minutes after "Done" or paid-invoice — asking for a Google review. Empty = feature stays off.</p>
+  </div>
+  <div class="card">
+    <h3>SignalWire webhooks (read-only)</h3>
+    <div id="swWebhooks" style="font-family:'SFMono-Regular',Menlo,monospace;font-size:12px;color:var(--ink-soft);line-height:1.6">Loading…</div>
+    <p style="font-size:12px;color:var(--ink-soft);margin-top:10px">Paste these into your SignalWire phone-number settings. SMS webhook routes STOP/START opt-outs. Voice webhook forwards to your cell and logs the call.</p>
+  </div>
+  <div class="card">
+    <h3>Change password</h3>
+    <div class="field"><label>New password (min 6 chars)</label><input id="s_pw" type="password" placeholder="Leave blank to keep current"></div>
+  </div>
+  <button class="btn block" onclick="saveSettings()">Save all settings</button>
+</section>
+
+</main>
+
+<!-- Bottom nav -->
+<nav class="tabnav" id="tabnav" style="grid-template-columns:repeat(8,1fr)">
+  <button class="tab on" data-tab="home"><span class="ic">🏠</span><span>Home</span></button>
+  <button class="tab" data-tab="schedule"><span class="ic">🗺️</span><span>Route</span></button>
+  <button class="tab" data-tab="tickets"><span class="ic">🎟️</span><span>Tickets</span><span class="reddot" id="ticketsDot"></span></button>
+  <button class="tab" data-tab="customers"><span class="ic">👥</span><span>Customers</span></button>
+  <button class="tab" data-tab="jobs"><span class="ic">🔧</span><span>Jobs</span></button>
+  <button class="tab" data-tab="invoices"><span class="ic">💰</span><span>Bills</span></button>
+  <button class="tab" data-tab="chat"><span class="ic">💬</span><span>Chat</span></button>
+  <button class="tab" data-tab="me"><span class="ic">⚙️</span><span>Me</span></button>
+</nav>
+
+<!-- Modal shell -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="sheet" id="modalContent"></div>
+</div>
+
+<div class="toast" id="toast">saved</div>
+
+<script>
+// ── STATE + UTIL ──
+let customers=[],jobs=[],invoices=[],chatHistory=[],me=null,currentJob=null;
+const $=id=>document.getElementById(id);
+const money=n=>'$'+(+n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const toast=(msg,ms=1400)=>{const t=$('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),ms);};
+async function api(path,opts={}){const r=await fetch('/handy/api'+path,{credentials:'include',headers:{'Content-Type':'application/json'},...opts});if(r.status===401){location.href='/handy/login';return}return r.json();}
+
+// ── TAB NAV ──
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.tab)));
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===name));
+  document.querySelectorAll('.view').forEach(v=>{
+    const on=v.dataset.view===name;
+    if(name==='chat'&&on){v.style.display='flex';v.classList.add('on');}
+    else {v.classList.toggle('on',on);v.style.display=on?'block':'none';}
+  });
+  if(name==='home'){loadOverview();loadLegalTip(false);}
+  if(name==='schedule')loadSchedule();
+  if(name==='tickets')loadTickets();
+  if(name==='customers')loadCustomers();
+  if(name==='jobs')loadJobs();
+  if(name==='invoices')loadInvoices();
+  if(name==='me')loadMe();
+  // Auto-refresh tickets every 30s while the Tickets tab is active
+  if(window._ticketsPoller){clearInterval(window._ticketsPoller);window._ticketsPoller=null;}
+  if(name==='tickets')window._ticketsPoller=setInterval(loadTickets,30000);
+}
+
+// ── OVERVIEW ──
+async function loadOverview(){
+  const d=await api('/overview');if(!d)return;
+  const pt=+d.stats.pending_tickets||0;
+  const ptCard=pt>0
+    ? `<div class="stat orange" style="cursor:pointer" onclick="showTab('tickets')"><div class="k">Tickets waiting</div><div class="v big">${pt}</div><div class="v sub">${pt===1?'1 ticket':pt+' tickets'} waiting for your response</div></div>`
+    : `<div class="stat"><div class="k">Tickets</div><div class="v big" style="color:var(--sage)">0</div><div class="v sub">All clear — no pending requests</div></div>`;
+  $('stats').innerHTML=`
+    ${ptCard}
+    <div class="stat blue"><div class="k">Billed 7d</div><div class="v big">${money(d.stats.billed_this_week)}</div></div>
+    <div class="stat"><div class="k">Collected 7d</div><div class="v big" style="color:var(--sage)">${money(d.stats.collected_this_week)}</div></div>
+    <div class="stat orange"><div class="k">Outstanding</div><div class="v big">${money(d.stats.outstanding)}</div></div>
+    <div class="stat"><div class="k">Overdue</div><div class="v big" style="color:var(--clay)">${d.stats.overdue_count}</div><div class="v sub">${d.stats.customer_count} customers · ${d.stats.open_jobs} open jobs</div></div>`;
+  // Also toggle the red dot on the Tickets tab
+  const dot=$('ticketsDot');if(dot)dot.classList.toggle('on',pt>0);
+  $('overdueList').innerHTML=d.overdue.length===0
+    ? '<div class="empty">No late invoices — nice.</div>'
+    : d.overdue.map(i=>`
+      <div class="item overdue">
+        <div class="row"><span class="name">${esc(i.customer_name)}</span><span class="amount">${money(i.total)}</span></div>
+        <div class="meta">${esc(i.invoice_number)} · ${i.days_past}d past due · reminded ${i.reminder_count}x</div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+          <button class="btn sm warm" onclick="event.stopPropagation();fireRemind(${i.id})">📲 Remind now</button>
+          <button class="btn sm sage" onclick="event.stopPropagation();markPaid(${i.id})">✓ Mark paid</button>
+          <button class="btn sm ghost" onclick="event.stopPropagation();viewInvoice(${i.id})">Open</button>
+        </div>
+      </div>`).join('');
+  $('upcomingList').innerHTML=d.upcoming_jobs.length===0
+    ? '<div class="empty">Nothing scheduled. Tap Jobs → New to add one.</div>'
+    : d.upcoming_jobs.map(j=>`<div class="item"><div class="row"><span class="name">${esc(j.title)}</span><span class="meta">${esc(j.scheduled_at||'')}</span></div><div class="meta">${esc(j.customer_name||'')}</div></div>`).join('');
+}
+async function fireRemind(id){const r=await api('/invoices/'+id+'/remind',{method:'POST'});if(r&&r.ok){toast('Reminder fired');loadOverview();}else toast('Reminder failed');}
+async function markPaid(id){if(!confirm('Mark this invoice paid?'))return;const r=await api('/invoices/'+id+'/mark-paid',{method:'POST'});if(r&&r.ok){toast('Marked paid');loadOverview();loadInvoices();}}
+
+// ── LEGAL PROTECTION WIDGET ──
+async function loadLegalTip(fresh){
+  const card=$('legalCard');if(!card)return;
+  try{
+    const d=await api('/legal-tip'+(fresh?'?fresh=1':''));
+    if(!d||!d.tip){$('legalHeadline').textContent='Legal tip unavailable';$('legalBody').textContent='Could not load the tip library. Try again shortly.';return;}
+    const t=d.tip;
+    const chip=$('legalChip');chip.textContent=(t.category||'').replace(/_/g,' ');chip.className='legal-chip '+(t.category||'');
+    const sev=$('legalSev');sev.className='legal-sev '+(t.severity||'info');sev.querySelector('.lbl').textContent=t.severity||'info';
+    $('legalHeadline').textContent=t.headline||'';
+    $('legalBody').textContent=t.body||'';
+    $('legalCitation').textContent=t.citation?('Source: '+t.citation):'';
+    $('legalAction').textContent=t.action||'';
+    if(d.disclaimer){const dq=card.querySelector('.legal-disclaimer');if(dq)dq.textContent=d.disclaimer;}
+  }catch(e){console.warn('legal-tip load failed',e);}
+}
+async function openLegalLibrary(){
+  openModal();
+  $('modalContent').innerHTML=`<h2>Arizona Legal Protection — Full Library</h2>
+    <div style="font-size:11px;color:var(--ink-soft);font-style:italic;margin-bottom:14px">Loading full library…</div>`;
+  try{
+    const d=await api('/legal-tips/all');
+    if(!d||!d.ok){$('modalContent').innerHTML='<h2>Library</h2><p>Could not load library.</p>';return;}
+    const catOrder=['protocol','court_prep','collection','compliance','legal_update'];
+    const catLabel={protocol:'Job-site protocol',court_prep:'Court preparation',collection:'Collections',compliance:'Compliance',legal_update:'Legal updates'};
+    const groups=catOrder.filter(c=>d.by_category[c]&&d.by_category[c].length).map(c=>{
+      const items=d.by_category[c].map(t=>`<div class="legal-lib-item ${esc(t.severity)}">
+        <div class="h">${esc(t.headline)}</div>
+        <div style="font-size:12px;color:var(--ink);line-height:1.5;margin:4px 0 6px">${esc(t.body)}</div>
+        <div class="c">${esc(t.citation||'')}</div>
+      </div>`).join('');
+      return `<div class="legal-lib-group"><h4>${esc(catLabel[c]||c)} <span style="font-size:11px;color:var(--ink-soft);font-weight:400;text-transform:none;letter-spacing:0">(${d.by_category[c].length})</span></h4>${items}</div>`;
+    }).join('');
+    $('modalContent').innerHTML=`<h2>Arizona Legal Protection — Full Library</h2>
+      <div style="font-size:11px;color:var(--ink-soft);font-style:italic;margin-bottom:14px">${esc(d.disclaimer||'')}<br>${esc(d.jurisdiction||'')} · ${d.total} tips</div>
+      ${groups}
+      <div style="text-align:center;margin-top:16px"><button class="btn ghost" onclick="closeModal()">Close</button></div>`;
+  }catch(e){$('modalContent').innerHTML='<h2>Library</h2><p>Load error.</p>';}
+}
+
+// ── CUSTOMERS ──
+async function loadCustomers(){const d=await api('/customers');if(!d)return;customers=d.customers||[];renderCustomers();}
+function renderCustomers(){
+  const q=($('custSearch').value||'').toLowerCase();
+  const filt=q?customers.filter(c=>(c.name+' '+c.email+' '+c.phone+' '+c.city).toLowerCase().includes(q)):customers;
+  $('custList').innerHTML=filt.length===0
+    ? '<div class="empty">No customers yet. Tap + Add.</div>'
+    : filt.map(c=>{
+      const loc=[esc(c.address),esc(c.city),esc(c.zip)].filter(Boolean).join(', ');
+      const unpaidPill=c.unpaid_count?`<span class="pill overdue" style="float:right">${c.unpaid_count} unpaid</span>`:'';
+      return `<div class="item customer" onclick="openCustCard(${c.id})">
+        ${unpaidPill}
+        <span class="cname">${esc(c.name)}</span>
+        ${c.phone?`<div class="cline"><span class="ic">📞</span>${esc(c.phone)}</div>`:''}
+        ${loc?`<div class="cline"><span class="ic">📍</span>${loc}</div>`:''}
+      </div>`;
+    }).join('');
+}
+async function openCustCard(id){
+  const d=await api('/customers/'+id+'/detail');if(!d)return;
+  const c=d.customer,m=d.money,J=d.jobs;
+  const loc=[esc(c.address),esc(c.city),esc(c.state),esc(c.zip)].filter(Boolean).join(', ');
+  const contactLine=[
+    c.phone?`<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>`:'',
+    c.email?`<a href="mailto:${esc(c.email)}">✉️ ${esc(c.email)}</a>`:'',
+  ].filter(Boolean).join(' &nbsp;·&nbsp; ');
+  const jobList=(arr,emptyMsg)=>arr.length===0
+    ?`<div class="empty" style="padding:12px">${emptyMsg}</div>`
+    :arr.map(j=>`<div class="cc-job" onclick="closeModal();setTimeout(()=>openJobDetail(${j.id}),200)"><div><div class="t">${esc(j.title)}</div><div class="m">${(+j.total_hours||0).toFixed(1)} hrs · <span class="pill ${j.status}">${j.status}</span>${j.scheduled_at?' · '+esc(j.scheduled_at.slice(0,10)):''}${j.priority&&j.priority!=='normal'?' · '+j.priority:''}</div></div><span style="color:var(--ink-soft);font-size:20px">›</span></div>`).join('');
+  $('modalContent').innerHTML=`
+    <div class="cc-header">
+      <div class="cc-name">${esc(c.name)}</div>
+      <div class="cc-contact">${loc||'<em>No address on file</em>'}</div>
+      <div class="cc-contact" style="margin-top:8px">${contactLine||'<em>No phone/email</em>'}</div>
+      ${c.pay_pref?`<div class="cc-contact" style="margin-top:6px">💵 Pays via <strong>${esc(c.pay_pref)}</strong></div>`:''}
+    </div>
+
+    <div class="cc-money">
+      <div class="box received"><div class="k">Received</div><div class="v">${money(m.received)}</div><div class="sub">${m.paid_count} paid</div></div>
+      <div class="box owed${m.owed===0?' zero':''}"><div class="k">Owed</div><div class="v">${money(m.owed)}</div><div class="sub">${m.unpaid_count} unpaid</div></div>
+    </div>
+
+    ${c.notes?`<h4 style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin:16px 0 8px;font-weight:600">Notes</h4><div class="cc-notes">${esc(c.notes)}</div>`:''}
+
+    <div class="cc-jobs">
+      <h4>Future jobs · ${J.future.length}</h4>
+      ${jobList(J.future,'None scheduled')}
+      <h4>Present jobs · ${J.present.length}</h4>
+      ${jobList(J.present,'Nothing active')}
+      <h4>Past jobs · ${J.past.length}</h4>
+      ${jobList(J.past,'No past jobs')}
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
+      <button class="btn block warm" onclick="closeModal();setTimeout(()=>{openJob();setTimeout(()=>{const sel=document.getElementById('j_cust');if(sel)sel.value=${c.id};},50);},200)">+ New job for ${esc(c.name.split(' ')[0])}</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn ghost sm" onclick="openCust(${c.id})">✏️ Edit customer</button>
+      ${c.phone?`<a class="btn ghost sm" href="sms:${esc(c.phone)}">💬 Text</a>`:''}
+      <button class="btn ghost sm" onclick="closeModal()">Close</button>
+    </div>`;
+  openModal();
+}
+function openCust(id){
+  const c=id?customers.find(x=>x.id===id):{name:'',phone:'',email:'',address:'',city:'',state:'AZ',zip:'',pay_pref:'',notes:''};
+  $('modalContent').innerHTML=`
+    <h2>${id?'Edit':'New'} customer</h2>
+    <div class="field"><label>Name *</label><input id="c_name" value="${esc(c.name)}"></div>
+    <div class="row2">
+      <div class="field"><label>Phone</label><input id="c_phone" type="tel" value="${esc(c.phone)}"></div>
+      <div class="field"><label>Email</label><input id="c_email" type="email" value="${esc(c.email)}"></div>
+    </div>
+    <div class="field"><label>Address</label><input id="c_address" value="${esc(c.address)}"></div>
+    <div class="row2">
+      <div class="field"><label>City</label><input id="c_city" value="${esc(c.city||'Tucson')}"></div>
+      <div class="field"><label>State/Zip</label><input id="c_zip" value="${esc(c.state||'AZ')} ${esc(c.zip)}"></div>
+    </div>
+    <div class="field"><label>How they pay</label><select id="c_pay"><option value="">—</option>${['cash','check','paypal','venmo','cashapp','zelle','card','invoice/net30','other'].map(x=>`<option${c.pay_pref===x?' selected':''}>${x}</option>`).join('')}</select></div>
+    <div class="field"><label>Notes</label><textarea id="c_notes">${esc(c.notes)}</textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn ghost block" onclick="closeModal()">Cancel</button>
+      <button class="btn block" onclick="saveCust(${id||'null'})">${id?'Save':'Add'}</button>
+      ${id?`<button class="btn clay sm" onclick="delCust(${id})">Delete</button>`:''}
+    </div>`;
+  openModal();
+}
+async function saveCust(id){
+  const body={name:$('c_name').value.trim(),phone:$('c_phone').value.trim(),email:$('c_email').value.trim(),address:$('c_address').value.trim(),city:$('c_city').value.trim(),state:'AZ',zip:$('c_zip').value.trim().split(' ').pop(),pay_pref:$('c_pay').value,notes:$('c_notes').value.trim()};
+  if(!body.name){toast('Name required');return}
+  const r=id?await api('/customers/'+id,{method:'PUT',body:JSON.stringify(body)}):await api('/customers',{method:'POST',body:JSON.stringify(body)});
+  if(r&&r.ok){toast('Saved');closeModal();loadCustomers();}
+}
+async function delCust(id){if(!confirm('Delete customer?'))return;await api('/customers/'+id,{method:'DELETE'});toast('Deleted');closeModal();loadCustomers();}
+
+// ── JOBS ──
+async function loadJobs(){const d=await api('/jobs');if(!d)return;jobs=d.jobs||[];const cd=await api('/customers');if(cd)customers=cd.customers||[];renderJobs();}
+function renderJobs(){
+  $('jobList').innerHTML=jobs.length===0
+    ? '<div class="empty">No jobs yet. Tap + New job.</div>'
+    : jobs.map(j=>{
+      const total=(j.hours_value||0)+(j.materials_value||0);
+      const prio=j.priority||'normal';
+      const prioClass = prio==='urgent'?' prio-urgent-item':(prio==='high'?' prio-high-item':'');
+      return `<div class="item${prioClass}" onclick="openJobDetail(${j.id})">
+        <div class="row"><span class="name"><span class="prio-dot prio-${prio}" title="Priority: ${prio}"></span>${esc(j.title)}</span><span class="pill ${j.status||'open'}">${esc(j.status||'open')}</span></div>
+        <div class="meta">${esc(j.customer_name||'?')} · ${(+j.total_hours||0).toFixed(1)} hrs · ${money(total)} billable${prio!=='normal'?` · <strong style="color:${prio==='urgent'?'var(--clay)':prio==='high'?'var(--orange)':'var(--ink-soft)'};text-transform:uppercase;font-size:11px">${prio}</strong>`:''}</div>
+      </div>`;
+    }).join('');
+}
+function openJob(){
+  if(customers.length===0){toast('Add a customer first');showTab('customers');return}
+  const today=new Date();today.setHours(9,0,0,0);
+  const defaultDate=new Date(today.getTime()+24*3600*1000).toISOString().slice(0,16);
+  $('modalContent').innerHTML=`
+    <h2>New job</h2>
+    <div class="field"><label>Customer *</label><select id="j_cust">${customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>Title *</label><input id="j_title" placeholder="e.g. Fix kitchen sink drain"></div>
+    <div class="field"><label>Description</label><textarea id="j_desc" placeholder="Scope, materials needed, access notes…"></textarea></div>
+    <div class="row2">
+      <div class="field"><label>Scheduled (map + reminders)</label><input id="j_sched" type="datetime-local" value="${defaultDate}"></div>
+      <div class="field"><label>Priority</label><select id="j_prio">
+        <option value="low">🔻 Low</option>
+        <option value="normal" selected>🔷 Normal</option>
+        <option value="high">🟠 High</option>
+        <option value="urgent">🔴 Urgent</option>
+      </select></div>
+    </div>
+    <div class="field"><label>Hourly rate (blank = default)</label><input id="j_rate" type="number" step="0.01"></div>
+    <div style="display:flex;gap:8px"><button class="btn ghost block" onclick="closeModal()">Cancel</button><button class="btn block" onclick="createJob()">Add job</button></div>`;
+  openModal();
+}
+async function createJob(){
+  const sched=$('j_sched').value;
+  const body={customer_id:+$('j_cust').value,title:$('j_title').value.trim(),description:$('j_desc').value.trim(),hourly_rate:+$('j_rate').value||null,priority:$('j_prio').value,scheduled_at:sched?new Date(sched).toISOString():null};
+  if(!body.title){toast('Title required');return}
+  const r=await api('/jobs',{method:'POST',body:JSON.stringify(body)});
+  if(r&&r.ok){toast('Job created');closeModal();loadJobs();openJobDetail(r.id);}
+}
+async function openJobDetail(id){
+  const d=await api('/jobs/'+id);if(!d)return;
+  const j=d.job,hours=d.hours,mat=d.materials;
+  const hrTotal=hours.reduce((s,h)=>s+h.hours*(h.rate||me?.default_hourly_rate||65),0);
+  const matTotal=mat.reduce((s,m)=>s+m.quantity*m.unit_cost*(1+m.markup_pct/100),0);
+  $('modalContent').innerHTML=`
+    <h2>${esc(j.title)}</h2>
+    <div style="color:var(--ink-soft);font-size:13px;margin-bottom:14px">${esc(j.customer_name||'')} · <span class="pill ${j.status}">${j.status}</span></div>
+
+    <div class="row2" style="margin-bottom:14px">
+      <div class="card" style="margin:0;padding:12px"><div class="k">Labor</div><div class="v">${money(hrTotal)}</div></div>
+      <div class="card" style="margin:0;padding:12px"><div class="k">Materials</div><div class="v">${money(matTotal)}</div></div>
+    </div>
+
+    ${(j.status==='open'||j.status==='inprogress'||j.status==='scheduled')?`
+    <div class="sec-title">📲 Status update — text customer</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px">
+      <button class="btn sm ghost" onclick="statusSms(${id},'on_my_way')" style="padding:12px 6px;min-height:52px;font-size:12px;line-height:1.2">📲<br>On my way</button>
+      <button class="btn sm warm" onclick="statusSms(${id},'started')" style="padding:12px 6px;min-height:52px;font-size:12px;line-height:1.2">🏁<br>Started</button>
+      <button class="btn sm sage" onclick="statusSms(${id},'done')" style="padding:12px 6px;min-height:52px;font-size:12px;line-height:1.2">✅<br>Done</button>
+    </div>
+    `:''}
+
+    <div class="sec-title">📝 Notes</div>
+    <div id="jobNotesList" style="margin-bottom:8px"><div class="empty" style="padding:8px;font-size:13px">Loading notes…</div></div>
+    <div style="display:flex;gap:6px;margin-bottom:14px">
+      <textarea id="jn_text" placeholder="Quick note — what did you observe, what needs follow-up, customer said…" style="flex:1;padding:10px 12px;border:1.5px solid var(--hair);border-radius:8px;font-size:14px;min-height:60px;resize:vertical;font-family:inherit" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();addJobNote(${id})}"></textarea>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:14px">
+      <button class="btn sm" onclick="addJobNote(${id})" style="flex:1">+ Add note</button>
+      <button class="btn sm ghost" id="voiceBtn_${id}" onclick="toggleVoiceNote(${id})">🎤 Voice</button>
+    </div>
+
+    <div class="sec-title">Hours</div>
+    <div class="row2" style="grid-template-columns:1fr 80px 60px auto;gap:6px;margin-bottom:8px">
+      <input id="h_desc" placeholder="What you did" style="padding:10px 12px;border:1.5px solid var(--hair);border-radius:8px;font-size:14px">
+      <input id="h_hrs" placeholder="Hrs" type="number" step="0.25" style="padding:10px 12px;border:1.5px solid var(--hair);border-radius:8px;font-size:14px">
+      <input id="h_rate" placeholder="Rate" type="number" step="1" style="padding:10px 12px;border:1.5px solid var(--hair);border-radius:8px;font-size:14px">
+      <button class="btn sm" onclick="addHours(${id})">+</button>
+    </div>
+    ${hours.map(h=>`<div class="item" style="padding:10px 12px"><div class="row"><span>${esc(h.description||'Labor')}</span><span class="amount">${h.hours}h × ${money(h.rate||me?.default_hourly_rate||65)}</span></div><div class="meta">${esc(h.entry_date)} <button class="btn sm ghost" style="float:right;padding:2px 8px" onclick="event.stopPropagation();delHours(${h.id},${id})">×</button></div></div>`).join('')||'<div class="empty" style="padding:10px">No hours logged.</div>'}
+
+    <div class="sec-title">Materials</div>
+    <div class="row2" style="grid-template-columns:1fr 60px 70px auto;gap:6px;margin-bottom:8px">
+      <input id="m_item" placeholder="Item" style="padding:10px 12px;border:1.5px solid var(--hair);border-radius:8px;font-size:14px">
+      <input id="m_qty" placeholder="Qty" type="number" step="0.01" value="1" style="padding:10px 12px;border:1.5px solid var(--hair);border-radius:8px;font-size:14px">
+      <input id="m_cost" placeholder="$ cost" type="number" step="0.01" style="padding:10px 12px;border:1.5px solid var(--hair);border-radius:8px;font-size:14px">
+      <button class="btn sm" onclick="addMaterial(${id})">+</button>
+    </div>
+    ${mat.map(m=>`<div class="item" style="padding:10px 12px"><div class="row"><span>${esc(m.item)}</span><span class="amount">${m.quantity} × ${money(m.unit_cost)}</span></div><div class="meta">${esc(m.entry_date)} · +${m.markup_pct}% markup <button class="btn sm ghost" style="float:right;padding:2px 8px" onclick="event.stopPropagation();delMat(${m.id},${id})">×</button></div></div>`).join('')||'<div class="empty" style="padding:10px">No materials logged.</div>'}
+
+    <div class="sec-title">Photos + documents</div>
+    <div class="att-grid" id="attGrid"><div class="empty" style="grid-column:1/-1;padding:12px">Loading…</div></div>
+    <div class="att-row">
+      <label class="att-btn">📷 Take photo<input type="file" accept="image/*" capture="environment" onchange="uploadAtt(${id},this.files[0],'photo')"></label>
+      <label class="att-btn">🖼 From library<input type="file" accept="image/*" multiple onchange="uploadMany(${id},this.files,'photo')"></label>
+      <label class="att-btn">📄 Document<input type="file" accept="application/pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,image/*" multiple onchange="uploadMany(${id},this.files,'document')"></label>
+    </div>
+
+    <div class="sec-title">Priority</div>
+    <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+      ${['low','normal','high','urgent'].map(p=>`<button class="btn sm ${j.priority===p?(p==='urgent'?'clay':p==='high'?'warm':p==='normal'?'':'ghost'):'ghost'}" onclick="setJobPriority(${id},'${p}')">${p==='urgent'?'🔴':p==='high'?'🟠':p==='normal'?'🔷':'🔻'} ${p}</button>`).join('')}
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
+      <button class="btn ghost sm" onclick="setJobStatus(${id},'inprogress')">In progress</button>
+      <button class="btn ghost sm" onclick="setJobStatus(${id},'complete')">Complete</button>
+      <button class="btn sage sm" onclick="createInvoice(${id})">Create invoice</button>
+      <button class="btn clay sm" onclick="deleteJob(${id})">🗑 Delete job</button>
+    </div>
+    <button class="btn ghost block" onclick="closeModal()" style="margin-top:14px">Close</button>`;
+  openModal();
+  loadAttachments(id);
+  loadJobNotes(id);
+}
+async function setJobPriority(id,priority){await api('/jobs/'+id,{method:'PUT',body:JSON.stringify({priority})});toast('Priority: '+priority);openJobDetail(id);loadJobs();}
+
+// ── JOB NOTES ──
+async function loadJobNotes(jobId){
+  try {
+    const r=await api('/jobs/'+jobId+'/notes');
+    const list=document.getElementById('jobNotesList'); if(!list)return;
+    const notes=r?.notes||[];
+    if(notes.length===0){list.innerHTML='<div class="empty" style="padding:8px;font-size:13px;text-align:left;color:var(--ink-soft)">No notes yet. Jot something quick — first-hand notes save your ass in court.</div>';return}
+    list.innerHTML=notes.map(n=>{
+      const when=(n.created_at||'').replace('T',' ').split('.')[0];
+      const isVoice=n.note_type==='voice_transcribed'&&n.attachment_id;
+      const audioPlayer=isVoice?`<audio controls src="/handy/api/attachments/${n.attachment_id}/raw" style="width:100%;margin-top:4px;height:32px"></audio>`:'';
+      return `<div style="background:#FFFCF5;border:1px solid var(--hair);border-radius:8px;padding:10px 12px;margin-bottom:6px"><div style="font-size:14px;color:var(--ink);white-space:pre-wrap;line-height:1.4">${esc(n.note_text||'')}</div>${audioPlayer}<div style="font-size:11px;color:var(--ink-soft);margin-top:6px;display:flex;justify-content:space-between"><span>${esc(n.author_name||'Danny')} · ${esc(when)}</span><button style="background:none;border:none;color:var(--clay);cursor:pointer;font-family:inherit;font-size:11px" onclick="delJobNote(${jobId},${n.id})">×</button></div></div>`;
+    }).join('');
+  } catch(e){}
+}
+async function addJobNote(jobId){
+  const ta=document.getElementById('jn_text');
+  const text=(ta?.value||'').trim();
+  if(!text){toast('Type a note first');return}
+  const r=await api('/jobs/'+jobId+'/notes',{method:'POST',body:JSON.stringify({note_text:text})});
+  if(r&&r.ok){ta.value='';toast('Note saved');loadJobNotes(jobId);}
+  else toast('Save failed');
+}
+async function delJobNote(jobId,noteId){
+  if(!confirm('Delete this note?'))return;
+  await api('/jobs/'+jobId+'/notes/'+noteId,{method:'DELETE'});loadJobNotes(jobId);
+}
+
+// ── VOICE NOTE (MediaRecorder, 30s max) ──
+let _voiceRecorder=null, _voiceChunks=[], _voiceTimer=null;
+async function toggleVoiceNote(jobId){
+  const btn=document.getElementById('voiceBtn_'+jobId); if(!btn)return;
+  if(_voiceRecorder&&_voiceRecorder.state==='recording'){_voiceRecorder.stop();return}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    _voiceChunks=[];
+    _voiceRecorder=new MediaRecorder(stream);
+    _voiceRecorder.ondataavailable=(e)=>{if(e.data.size>0)_voiceChunks.push(e.data)};
+    _voiceRecorder.onstop=async ()=>{
+      clearTimeout(_voiceTimer);
+      stream.getTracks().forEach(t=>t.stop());
+      btn.textContent='🎤 Voice';btn.classList.remove('clay');btn.classList.add('ghost');
+      if(_voiceChunks.length===0)return;
+      const blob=new Blob(_voiceChunks,{type:_voiceRecorder.mimeType||'audio/webm'});
+      if(blob.size>10*1024*1024){toast('Voice memo too large');return}
+      toast('Uploading voice memo…',900);
+      const reader=new FileReader();
+      reader.onload=async ()=>{
+        const r=await api('/jobs/'+jobId+'/notes/voice',{method:'POST',body:JSON.stringify({data_url:reader.result,mime_type:blob.type})});
+        if(r&&r.ok){toast('Voice memo saved');loadJobNotes(jobId);}
+        else toast('Voice save failed');
+      };
+      reader.readAsDataURL(blob);
+    };
+    _voiceRecorder.start();
+    btn.textContent='⏺ Stop (30s)';btn.classList.remove('ghost');btn.classList.add('clay');
+    _voiceTimer=setTimeout(()=>{if(_voiceRecorder&&_voiceRecorder.state==='recording')_voiceRecorder.stop();},30000);
+  }catch(e){toast('Mic access denied: '+(e.message||'error'));}
+}
+
+// ── JOB STATUS SMS BUTTONS ──
+async function statusSms(jobId,action){
+  const labels={on_my_way:'On my way',started:'Started',done:'Done'};
+  if(!confirm(`Send "${labels[action]||action}" text to customer?`))return;
+  const r=await api('/jobs/'+jobId+'/status-sms',{method:'POST',body:JSON.stringify({status_action:action})});
+  if(!r||!r.ok){toast('Send failed: '+(r?.error||'unknown'));return}
+  if(r.sms&&!r.sms.ok){toast('SMS not sent: '+(r.sms.error||'—'));}
+  else toast('✓ '+(labels[action]||action)+' text sent');
+  openJobDetail(jobId);loadJobs();
+}
+
+// ── ATTACHMENTS (photos + documents) ──
+async function loadAttachments(jobId){
+  try {
+    const r=await api('/attachments/job/'+jobId);
+    const list=r?.attachments||r?.photos||[];
+    const grid=document.getElementById('attGrid');if(!grid)return;
+    if(list.length===0){grid.innerHTML='<div class="empty" style="grid-column:1/-1;padding:12px">No files attached yet.</div>';return}
+    grid.innerHTML=list.map(a=>{
+      const isImg=(a.kind_group==='photo')||(a.mime_type||'').startsWith('image/');
+      if(isImg){
+        return `<div class="att" onclick="window.open('/handy/api/attachments/${a.id}/raw','_blank')"><img src="/handy/api/attachments/${a.id}/raw" alt="${esc(a.caption||'')}" loading="lazy"><button class="rm" onclick="event.stopPropagation();delAtt(${a.id},${jobId})" title="Remove">×</button></div>`;
+      }
+      const icon=(a.mime_type||'').includes('pdf')?'📕':(a.mime_type||'').includes('word')?'📘':(a.mime_type||'').includes('sheet')||(a.mime_type||'').includes('excel')?'📗':'📄';
+      return `<div class="att doc" onclick="window.open('/handy/api/attachments/${a.id}/raw','_blank')"><span class="doc-ic">${icon}</span><span class="doc-nm">${esc(a.filename||'file')}</span><button class="rm always" onclick="event.stopPropagation();delAtt(${a.id},${jobId})">×</button></div>`;
+    }).join('');
+  } catch(e){}
+}
+function fileToDataUrl(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(file);});}
+async function uploadAtt(jobId,file,kind){
+  if(!file)return;
+  if(file.size>10*1024*1024){toast('File too large (max 10MB)');return}
+  toast('Uploading…',900);
+  try {
+    const dataUrl=await fileToDataUrl(file);
+    const r=await api('/attachments',{method:'POST',body:JSON.stringify({job_id:jobId,data_url:dataUrl,mime_type:file.type,filename:file.name,kind})});
+    if(r&&r.ok){toast('Attached');loadAttachments(jobId);}
+    else toast('Upload failed'+(r?.error?': '+r.error:''));
+  } catch(e){toast('Error: '+(e.message||'upload'));}
+}
+async function uploadMany(jobId,files,kind){
+  if(!files||files.length===0)return;
+  for(const f of files){await uploadAtt(jobId,f,kind);}
+}
+async function delAtt(id,jobId){
+  if(!confirm('Remove this attachment?'))return;
+  await api('/attachments/'+id,{method:'DELETE'});toast('Removed');loadAttachments(jobId);
+}
+async function deleteJob(id){
+  if(!confirm('Delete this job? Hours, materials, and photos will be removed too. Invoices from this job stay.'))return;
+  const r=await api('/jobs/'+id,{method:'DELETE'});
+  if(r&&r.ok){toast('Job deleted');closeModal();loadJobs();}
+  else toast('Delete failed');
+}
+async function addHours(jobId){
+  const body={job_id:jobId,description:$('h_desc').value,hours:parseFloat($('h_hrs').value),rate:parseFloat($('h_rate').value)||null};
+  if(!body.hours){toast('Hours required');return}
+  await api('/hours',{method:'POST',body:JSON.stringify(body)});toast('Logged');openJobDetail(jobId);
+}
+async function delHours(id,jobId){await api('/hours/'+id,{method:'DELETE'});openJobDetail(jobId);}
+async function addMaterial(jobId){
+  const body={job_id:jobId,item:$('m_item').value,quantity:parseFloat($('m_qty').value)||1,unit_cost:parseFloat($('m_cost').value),markup_pct:me?.default_material_markup_pct||15};
+  if(!body.item||!body.unit_cost){toast('Item + cost required');return}
+  await api('/materials',{method:'POST',body:JSON.stringify(body)});toast('Added');openJobDetail(jobId);
+}
+async function delMat(id,jobId){await api('/materials/'+id,{method:'DELETE'});openJobDetail(jobId);}
+async function setJobStatus(id,status){await api('/jobs/'+id,{method:'PUT',body:JSON.stringify({status})});toast('Updated');openJobDetail(id);loadJobs();}
+async function createInvoice(jobId){
+  const r=await api('/invoices/from-job/'+jobId,{method:'POST',body:JSON.stringify({})});
+  if(r&&r.ok){toast('Invoice '+r.invoice_number+' created — '+money(r.total));closeModal();showTab('invoices');}
+  else toast('Error: '+(r?.error||'failed'));
+}
+
+// ── INVOICES ──
+async function loadInvoices(){const d=await api('/invoices');if(!d)return;invoices=d.invoices||[];renderInvoices();}
+function renderInvoices(){
+  $('invoiceList').innerHTML=invoices.length===0
+    ? '<div class="empty">No invoices yet. Create one from a job.</div>'
+    : invoices.map(i=>`
+      <div class="item" onclick="viewInvoice(${i.id})">
+        <div class="row"><span class="name">${esc(i.invoice_number)}</span><span class="amount">${money(i.total)}</span></div>
+        <div class="meta">${esc(i.customer_name||'?')} · due ${esc(i.due_date||'—')} · <span class="pill ${i.status}">${i.status}</span></div>
+      </div>`).join('');
+}
+async function viewInvoice(id){
+  const d=await api('/invoices/'+id);if(!d)return;const i=d.invoice;
+  $('modalContent').innerHTML=`
+    <h2>${esc(i.invoice_number)}</h2>
+    <div style="color:var(--ink-soft);font-size:13px;margin-bottom:14px">${esc(i.customer_name)} · <span class="pill ${i.status}">${i.status}</span> · due ${esc(i.due_date||'—')}</div>
+    <div class="card" style="padding:14px">
+      ${i.line_items.map(it=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--hair);font-size:13px"><span>${esc(it.description)} × ${it.qty} ${esc(it.unit)}</span><span>${money(it.subtotal)}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:6px;font-weight:700;font-size:16px"><span>Total</span><span>${money(i.total)}</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+      ${i.status==='draft'?`<button class="btn block" onclick="sendInv(${id})">📤 Send to customer</button>`:''}
+      ${i.status==='sent'||i.status==='overdue'?`<button class="btn warm sm" onclick="fireRemind(${id});closeModal()">📲 Remind</button><button class="btn sage sm" onclick="markPaid(${id});closeModal()">✓ Mark paid</button>`:''}
+      <a class="btn ghost sm" href="/handy/invoice/${id}/public" target="_blank">👁 Public view</a>
+      <a class="btn ghost sm" href="/handy/api/invoices/${id}/pdf" target="_blank">📄 Download PDF</a>
+    </div>
+    <button class="btn ghost block" onclick="closeModal()" style="margin-top:12px">Close</button>`;
+  openModal();
+}
+async function sendInv(id){const r=await api('/invoices/'+id+'/send',{method:'POST'});if(r&&r.ok){toast('Sent (email+SMS)');closeModal();loadInvoices();}}
+
+// ── CHAT (Noble AI) ──
+async function sendChat(){
+  const inp=$('chatInput'),send=$('chatSend'),msg=inp.value.trim();
+  if(!msg)return;inp.value='';send.disabled=true;send.textContent='…';
+  const list=$('chatList');
+  list.insertAdjacentHTML('beforeend',`<div class="chat-msg you">${esc(msg)}</div>`);
+  list.scrollTop=list.scrollHeight;
+  chatHistory.push({role:'user',content:msg});
+  try {
+    const r=await api('/ai-chat',{method:'POST',body:JSON.stringify({message:msg,history:chatHistory.slice(-8)})});
+    const reply=r?.reply||'(no reply)';
+    chatHistory.push({role:'assistant',content:reply});
+    list.insertAdjacentHTML('beforeend',`<div class="chat-msg ai">${esc(reply)}</div>`);
+    list.scrollTop=list.scrollHeight;
+  } catch(e){list.insertAdjacentHTML('beforeend',`<div class="chat-msg ai" style="color:var(--clay)">Error: ${esc(e.message||'network')}</div>`);}
+  send.disabled=false;send.textContent='↑';inp.focus();
+}
+
+// ── SCHEDULE / JOB MAP ──
+let mapReady=false, mapInstance=null, mapMarkers=[], selectedDate=null;
+function ymd(d){return d.toISOString().slice(0,10);}
+function fmtWhen(iso){try{const d=new Date(iso);return d.toLocaleString('en-US',{weekday:'short',hour:'numeric',minute:'2-digit'});}catch(e){return iso;}}
+
+async function ensureMapLoaded(){
+  if(mapReady)return true;
+  const c=await api('/map-config');if(!c||!c.google_maps_key){document.getElementById('mapPlaceholder').innerHTML='<div>Map key not configured. Set GOOGLE_MAPS_KEY in ecosystem env.</div>';return false;}
+  await new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(c.google_maps_key);
+    s.onload=resolve;s.onerror=reject;document.head.appendChild(s);
+  }).catch(()=>{});
+  if(!window.google||!window.google.maps){document.getElementById('mapPlaceholder').innerHTML='<div>Map failed to load.</div>';return false;}
+  mapReady=true;
+  document.getElementById('mapPlaceholder').style.display='none';
+  mapInstance=new google.maps.Map(document.getElementById('mapContainer'),{center:{lat:32.2226,lng:-110.9747},zoom:11,disableDefaultUI:true,zoomControl:true,gestureHandling:'greedy',styles:[{featureType:'poi',stylers:[{visibility:'off'}]}]});
+  return true;
+}
+
+async function loadSchedule(){
+  await ensureMapLoaded();
+  // Day chips: today + next 6 days
+  const chipEl=document.getElementById('dayChips');
+  const chips=[];
+  const t=new Date();t.setHours(0,0,0,0);
+  for(let i=0;i<7;i++){
+    const d=new Date(t.getTime()+i*86400000);
+    const label=i===0?'Today':(i===1?'Tomorrow':d.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'}));
+    chips.push({date:ymd(d),label});
+  }
+  if(!selectedDate)selectedDate=chips[0].date;
+  chipEl.innerHTML=chips.map(c=>`<button class="btn ${selectedDate===c.date?'':'ghost'} sm" style="flex-shrink:0;white-space:nowrap" onclick="pickDate('${c.date}')">${c.label}</button>`).join('');
+  // Load next-job card
+  loadNextJob();
+  // Load jobs for selected date
+  const r=await api('/schedule?date='+selectedDate+'&days=1');if(!r)return;
+  renderScheduleList(r.jobs, r.home);
+  renderMapPins(r.jobs, r.home);
+}
+window.pickDate=function(d){selectedDate=d;loadSchedule();};
+
+async function loadNextJob(){
+  const r=await api('/schedule/next');if(!r)return;
+  const el=document.getElementById('nextJobCard');
+  if(!r.next){el.querySelector('#njLoading').innerHTML='<div style="opacity:0.9">Nothing scheduled ahead. Add scheduled_at to a job to see it here.</div>';return;}
+  const n=r.next;
+  const miles=(n.miles!==undefined)?`<strong>${n.miles} mi</strong> · ~${n.minutes} min drive`:'';
+  el.innerHTML=`<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;opacity:0.85;margin-bottom:6px">NEXT JOB</div>
+    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:4px">${esc(n.title)}</div>
+    <div style="font-size:14px;opacity:0.95;margin-bottom:6px">${esc(n.customer_name||'')} · ${esc([n.address,n.city].filter(Boolean).join(', '))||'(no address)'}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;opacity:0.85;padding-top:8px;border-top:1px solid rgba(255,255,255,0.15);margin-top:8px"><span>${fmtWhen(n.scheduled_at)}</span><span>${miles}</span></div>`;
+}
+
+function renderScheduleList(jobs, home){
+  const el=document.getElementById('scheduleList');
+  if(jobs.length===0){el.innerHTML='<div class="empty">No jobs scheduled for this day.</div>';return;}
+  el.innerHTML=`<div class="sec-title">${jobs.length} job${jobs.length===1?'':'s'} on ${selectedDate}</div>`+jobs.map((j,i)=>{
+    const miles=j.miles_from_home!==undefined?`${j.miles_from_home} mi from you · ~${j.est_minutes} min`:'';
+    const noLoc=(!j.lat||!j.lng)?'<span style="color:var(--clay);font-size:11px">⚠ no address geocoded</span>':'';
+    return `<div class="item" onclick="openJobDetail(${j.id})">
+      <div class="row"><span class="name"><span style="background:var(--blue);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;margin-right:8px;font-weight:700">${i+1}</span>${esc(j.title)}</span><span class="pill ${j.status}">${j.status}</span></div>
+      <div class="meta">${esc(j.customer_name||'?')} · ${esc([j.address,j.city].filter(Boolean).join(', '))||'no addr'} · ${fmtWhen(j.scheduled_at)}</div>
+      <div class="meta">${miles} ${noLoc}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMapPins(jobs, home){
+  if(!mapReady||!mapInstance)return;
+  mapMarkers.forEach(m=>m.setMap(null));mapMarkers=[];
+  const bounds=new google.maps.LatLngBounds();
+  // Home pin
+  if(home&&home.lat){
+    const homeMarker=new google.maps.Marker({position:{lat:home.lat,lng:home.lng},map:mapInstance,label:{text:'🏠',fontSize:'18px'},title:'Your home base'});
+    mapMarkers.push(homeMarker);bounds.extend(homeMarker.getPosition());
+  }
+  jobs.forEach((j,i)=>{
+    if(!j.lat||!j.lng)return;
+    const m=new google.maps.Marker({position:{lat:j.lat,lng:j.lng},map:mapInstance,label:{text:String(i+1),color:'#fff',fontWeight:'700'},title:j.title+' · '+j.customer_name});
+    m.addListener('click',()=>openJobDetail(j.id));
+    mapMarkers.push(m);bounds.extend(m.getPosition());
+  });
+  if(mapMarkers.length===0){mapInstance.setCenter({lat:32.2226,lng:-110.9747});mapInstance.setZoom(11);}
+  else if(mapMarkers.length===1){mapInstance.setCenter(mapMarkers[0].getPosition());mapInstance.setZoom(13);}
+  else{mapInstance.fitBounds(bounds,{padding:40});}
+}
+
+// ── ME / SETTINGS ──
+async function loadMe(){
+  const d=await api('/me');if(!d)return;me=d.user;
+  $('brandName').textContent=me.business_name||me.display_name||'Handy';
+  $('s_display').value=me.display_name||'';$('s_biz').value=me.business_name||'';
+  $('s_bizphone').value=me.business_phone||'';$('s_bizemail').value=me.business_email||'';
+  $('s_rate').value=me.default_hourly_rate||65;$('s_markup').value=me.default_material_markup_pct||15;
+  $('s_paypal').value=me.paypal_me||'';$('s_venmo').value=me.venmo||'';$('s_cashapp').value=me.cashapp||'';
+  if($('s_home'))$('s_home').value=me.home_address||'';
+  if($('s_gmb'))$('s_gmb').value=me.gmb_review_url||'';
+  loadSignalwireWebhooks();
+}
+async function loadSignalwireWebhooks(){
+  const box=$('swWebhooks'); if(!box)return;
+  try{
+    const r=await api('/signalwire-webhooks');if(!r){box.textContent='(login required)';return}
+    box.innerHTML=`<div><strong style="color:var(--ink)">From #:</strong> ${esc(r.from_number||'not set')}</div><div style="margin-top:6px"><strong style="color:var(--ink)">SMS inbound (STOP handler):</strong><br><span style="user-select:all;word-break:break-all">${esc(r.sms_inbound)}</span></div><div style="margin-top:6px"><strong style="color:var(--ink)">Voice inbound (call log + forward):</strong><br><span style="user-select:all;word-break:break-all">${esc(r.voice_inbound)}</span></div>`;
+  }catch(e){box.textContent='(unable to load)';}
+}
+async function saveSettings(){
+  const body={display_name:$('s_display').value,business_name:$('s_biz').value,business_phone:$('s_bizphone').value,business_email:$('s_bizemail').value,default_hourly_rate:+$('s_rate').value,default_material_markup_pct:+$('s_markup').value,paypal_me:$('s_paypal').value,venmo:$('s_venmo').value,cashapp:$('s_cashapp').value,home_address:$('s_home').value,gmb_review_url:$('s_gmb')?.value||''};
+  const pw=$('s_pw').value;if(pw.length>=6)body.new_password=pw;
+  await api('/me',{method:'POST',body:JSON.stringify(body)});
+  toast('Saved');$('s_pw').value='';loadMe();
+}
+
+// ── TICKETS (customer bookings inbox) ──
+let tickets=[],ticketFilter='all';
+document.querySelectorAll('#ticketChips .chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('#ticketChips .chip').forEach(x=>x.classList.toggle('on',x===c));
+  ticketFilter=c.dataset.filter;renderTickets();
+}));
+async function loadTickets(){
+  const d=await api('/tickets');if(!d)return;
+  tickets=d.tickets||[];
+  const dot=$('ticketsDot');if(dot)dot.classList.toggle('on',(+d.pending_count||0)>0);
+  renderTickets();
+}
+function fmtTicketDate(dateStr){
+  if(!dateStr)return'—';
+  try{const d=new Date(dateStr+'T12:00:00');return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}catch{return dateStr;}
+}
+function windowLabel(w){return w==='morning'?'☀️ Morning (8am–12pm)':w==='afternoon'?'🌤️ Afternoon (12pm–5pm)':w==='afterhours'?'🌙 After-hours (5pm+, hourly)':w||'—';}
+function renderTickets(){
+  const filt=ticketFilter==='all'?tickets:tickets.filter(t=>t.status===ticketFilter);
+  if(filt.length===0){$('ticketList').innerHTML=`<div class="empty">No ${ticketFilter==='all'?'':ticketFilter+' '}tickets right now.</div>`;return;}
+  $('ticketList').innerHTML=filt.map(t=>{
+    const pending=t.status==='pending';
+    const cls='item'+(pending?' pending-ticket':'');
+    const contact=[
+      t.customer_phone?`<a href="tel:${esc(t.customer_phone)}" onclick="event.stopPropagation()">📞 ${esc(t.customer_phone)}</a>`:'',
+      t.customer_email?`<a href="mailto:${esc(t.customer_email)}" onclick="event.stopPropagation()">✉️ ${esc(t.customer_email)}</a>`:''
+    ].filter(Boolean).join(' &nbsp;·&nbsp; ');
+    const addr=[t.customer_address,t.customer_city,t.customer_zip].filter(Boolean).join(', ');
+    const scheduledLine=t.status==='accepted'&&t.scheduled_at?`<div class="meta" style="color:var(--sage);font-weight:600;margin-top:4px">✓ Scheduled ${esc(new Date(t.scheduled_at).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}))}</div>`:'';
+    return `<div class="${cls}">
+      <div class="row">
+        <span class="name">${esc(t.customer_name||'(unknown)')}</span>
+        <span class="pill ${t.status}">${t.status}</span>
+      </div>
+      <div class="meta" style="margin-top:4px">${contact||'<em>No contact on file</em>'}</div>
+      ${addr?`<div class="meta">📍 ${esc(addr)}${t.customer_community?' · '+esc(t.customer_community):''}</div>`:''}
+      <div style="margin-top:10px;padding:10px;background:var(--surface-2);border-radius:8px">
+        <div style="font-weight:600;color:var(--ink);margin-bottom:4px">${esc(t.title)}${t.is_after_hours?' <span class="pill afterhours">after-hours</span>':''}</div>
+        ${t.description?`<div class="meta" style="white-space:pre-wrap">${esc(t.description)}</div>`:''}
+        <div class="meta" style="margin-top:6px">📅 ${fmtTicketDate(t.requested_date)} · ${esc(windowLabel(t.requested_window))}${t.hourly_rate?' · $'+t.hourly_rate+'/hr':''}</div>
+      </div>
+      ${scheduledLine}
+      ${pending?`<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn sage" style="flex:1;min-width:120px" onclick="openAcceptModal(${t.id})">✓ Accept</button>
+        <button class="btn sm ghost" onclick="openDeclineModal(${t.id})">Decline</button>
+      </div>`:''}
+      ${t.notes&&t.status==='declined'?`<div class="meta" style="margin-top:6px;font-style:italic">${esc(t.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+// Time-picker modal — 3 quick slots matching the window, plus a "custom time" input
+function openAcceptModal(id){
+  const t=tickets.find(x=>x.id===id);if(!t){toast('Ticket not found');return;}
+  const w=t.requested_window||'morning';
+  const defaultHour=w==='morning'?9:w==='afternoon'?13:18;
+  const slots=w==='morning'?[[8,'8:00 AM'],[9,'9:00 AM (default)'],[10,'10:00 AM'],[11,'11:00 AM']]
+    :w==='afternoon'?[[12,'12:00 PM'],[13,'1:00 PM (default)'],[14,'2:00 PM'],[15,'3:00 PM'],[16,'4:00 PM']]
+    :[[17,'5:00 PM'],[18,'6:00 PM (default)'],[19,'7:00 PM'],[20,'8:00 PM']];
+  const date=t.requested_date||new Date().toISOString().slice(0,10);
+  const isAfter=t.is_after_hours?1:0;
+  const rateDefault=t.hourly_rate||(isAfter?125:'');
+  const slotHTML=slots.map(([h,label])=>`<button class="slot-btn" onclick="acceptTicket(${id},'${date}',${h},0)"><strong>${label}</strong>90-minute window · ${esc(t.title)}</button>`).join('');
+  $('modalContent').innerHTML=`
+    <h2>Accept ticket — ${esc(t.customer_name||'')}</h2>
+    <p style="color:var(--ink-soft);font-size:13px;margin-bottom:14px">Pick a start time within the requested ${esc(w)} window. Customer gets an SMS + email the moment you tap.</p>
+    <div class="field"><label>Date</label><input id="acc_date" type="date" value="${date}"></div>
+    <div style="margin-bottom:14px">${slotHTML}</div>
+    ${isAfter?`<div class="field"><label>Hourly rate ($/hr) — after-hours job</label><input id="acc_rate" type="number" step="1" value="${rateDefault}"></div>`:''}
+    <div class="field"><label>Or pick a custom time</label>
+      <div class="row2">
+        <input id="acc_hour" type="number" min="0" max="23" placeholder="Hour (0-23)" value="${defaultHour}">
+        <input id="acc_min" type="number" min="0" max="59" placeholder="Min" value="0">
+      </div>
+    </div>
+    <button class="btn block" onclick="acceptTicketCustom(${id})">Confirm custom time</button>
+    <button class="btn ghost block" style="margin-top:8px" onclick="closeModal()">Cancel</button>`;
+  openModal();
+}
+function acceptTicketCustom(id){
+  const t=tickets.find(x=>x.id===id);if(!t)return;
+  const date=$('acc_date').value||t.requested_date;
+  const hour=parseInt($('acc_hour').value,10);const min=parseInt($('acc_min').value,10)||0;
+  if(isNaN(hour)||hour<0||hour>23){toast('Pick a valid hour');return;}
+  const rate=$('acc_rate')?parseFloat($('acc_rate').value)||null:null;
+  acceptTicket(id,date,hour,min,rate);
+}
+async function acceptTicket(id,date,hour,min,rate){
+  const t=tickets.find(x=>x.id===id);
+  const rateArg=(typeof rate==='number'&&rate)?rate:(t&&t.hourly_rate?t.hourly_rate:null);
+  // Build ISO scheduled_at in local time so it matches Phoenix (server tz)
+  const hh=String(hour).padStart(2,'0'),mm=String(min||0).padStart(2,'0');
+  const scheduled_at=`${date} ${hh}:${mm}:00`;
+  const body={scheduled_at};if(rateArg)body.hourly_rate=rateArg;
+  const r=await api('/tickets/'+id+'/accept',{method:'POST',body:JSON.stringify(body)});
+  if(r&&r.ok){toast('Accepted — customer notified');closeModal();loadTickets();loadOverview();}
+  else toast('Accept failed: '+(r&&r.error||'unknown'));
+}
+function openDeclineModal(id){
+  const t=tickets.find(x=>x.id===id);if(!t)return;
+  $('modalContent').innerHTML=`
+    <h2>Decline ticket — ${esc(t.customer_name||'')}</h2>
+    <p style="color:var(--ink-soft);font-size:13px;margin-bottom:14px">Optional reason — sent to customer via SMS + email.</p>
+    <div class="field"><label>Reason (optional)</label><textarea id="dec_reason" placeholder="e.g. Booked solid that week — happy to look at the following Tuesday."></textarea></div>
+    <button class="btn clay block" onclick="declineTicket(${id})">Decline + notify customer</button>
+    <button class="btn ghost block" style="margin-top:8px" onclick="closeModal()">Cancel</button>`;
+  openModal();
+}
+async function declineTicket(id){
+  const reason=($('dec_reason')&&$('dec_reason').value||'').trim();
+  const r=await api('/tickets/'+id+'/decline',{method:'POST',body:JSON.stringify({reason})});
+  if(r&&r.ok){toast('Declined — customer notified');closeModal();loadTickets();loadOverview();}
+  else toast('Decline failed: '+(r&&r.error||'unknown'));
+}
+
+// ── MODAL ──
+function openModal(){$('modal').classList.add('on');document.body.style.overflow='hidden';}
+function closeModal(){$('modal').classList.remove('on');document.body.style.overflow='';}
+
+// ── ASSISTANT TO-DO LIST (Home tab "today's punch list") ──
+async function loadTodoList(){
+  const d = await api('/todo-list'); if(!d || !d.ok) return;
+  const items = [];
+  const money2 = n => '$'+(+n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
+
+  // 1) Overdue invoices (highest priority — red)
+  if (d.overdue_invoices && d.overdue_invoices.count > 0) {
+    const oi = d.overdue_invoices;
+    items.push({
+      cls:'urgent', ic:'🔴',
+      headline: `${oi.count} overdue invoice${oi.count===1?'':'s'} totaling ${money2(oi.total)} — send reminders`,
+      detail:'Tap to open Bills tab and fire reminders.',
+      tab:'invoices'
+    });
+  }
+
+  // 2) Unpaid but not yet overdue (only if no overdue OR extra unpaid beyond overdue)
+  if (d.unpaid_invoices && d.unpaid_invoices.count > (d.overdue_invoices ? d.overdue_invoices.count : 0)) {
+    const remaining = d.unpaid_invoices.count - (d.overdue_invoices ? d.overdue_invoices.count : 0);
+    const top = (d.unpaid_invoices.top_5 || []).filter(r => r.days_overdue == null || r.days_overdue <= 0).slice(0,3);
+    if (top.length > 0) {
+      items.push({
+        cls:'warn', ic:'💰',
+        headline: `${remaining} unpaid invoice${remaining===1?'':'s'} — still within terms`,
+        detail: top.map(r => `${esc(r.customer_name||'?')} · ${money2(r.total)}`).join(' · '),
+        tab:'invoices'
+      });
+    }
+  }
+
+  // 3) Today's jobs (info blue — always show if any)
+  if (d.todays_jobs && d.todays_jobs.count > 0) {
+    const tj = d.todays_jobs;
+    const first = tj.first_job;
+    let firstStr = '';
+    if (first) {
+      const t = first.scheduled_at ? String(first.scheduled_at).slice(11,16) : '';
+      const addr = first.address ? ' · ' + esc(first.address) : '';
+      firstStr = `First: ${esc(first.customer_name||'?')}${addr}${t?' · '+t:''}`;
+    }
+    items.push({
+      cls:'info', ic:'📅',
+      headline: `${tj.count} job${tj.count===1?'':'s'} today`,
+      detail: firstStr,
+      tab:'schedule'
+    });
+  }
+
+  // 4) Pending tickets
+  if (d.pending_tickets && d.pending_tickets.count > 0) {
+    const pt = d.pending_tickets;
+    const preview = (pt.top_3 || []).map(t => esc(t.title || 'ticket')).join(', ');
+    items.push({
+      cls:'warn', ic:'🎟️',
+      headline: `${pt.count} new ticket${pt.count===1?'':'s'} waiting for your response`,
+      detail: preview ? `Latest: ${preview}` : '',
+      tab:'tickets'
+    });
+  }
+
+  // 5) Follow-ups (5-14 days since last completed job, no follow-up logged)
+  if (d.followups && d.followups.length > 0) {
+    const names = d.followups.slice(0,3).map(f => `${esc(f.customer_name)} (${f.days_since}d)`).join(', ');
+    const first = d.followups[0];
+    items.push({
+      cls:'info', ic:'🟠',
+      headline: `Follow up with ${d.followups.length} customer${d.followups.length===1?'':'s'} about how the job is holding up`,
+      detail: first ? `${names}${first.job_title?' — e.g. "'+esc(first.job_title)+'"':''}` : '',
+      tab: 'customers',
+      customerId: first ? first.customer_id : null
+    });
+  }
+
+  const card = $('todoCard'), list = $('todoList');
+  if (items.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+  list.innerHTML = items.map((it, i) =>
+    `<div class="todo-item ${it.cls}" data-idx="${i}" data-tab="${it.tab}" ${it.customerId?`data-cust="${it.customerId}"`:''}>
+      <div class="ic">${it.ic}</div>
+      <div class="body">
+        <div class="headline">${it.headline}</div>
+        ${it.detail?`<div class="detail">${it.detail}</div>`:''}
+      </div>
+      <div class="arr">›</div>
+    </div>`
+  ).join('');
+  list.querySelectorAll('.todo-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const tab = el.dataset.tab;
+      const cust = el.dataset.cust;
+      if (cust && typeof openCustCard === 'function') {
+        showTab('customers');
+        setTimeout(() => openCustCard(parseInt(cust,10)), 250);
+      } else if (tab) {
+        showTab(tab);
+      }
+    });
+  });
+}
+
+// Auto-refresh todo list every 60s while Home tab is active
+let _todoPoller = null;
+function startTodoPoller(){
+  if (_todoPoller) clearInterval(_todoPoller);
+  _todoPoller = setInterval(() => {
+    const homeOn = document.querySelector('.view[data-view="home"].on');
+    if (homeOn) loadTodoList();
+  }, 60000);
+}
+
+// Wire loadTodoList into showTab home
+const _origShowTab = showTab;
+showTab = function(name){
+  _origShowTab(name);
+  if (name === 'home') loadTodoList();
+};
+
+// ── FIRST-RUN WIZARD REDIRECT ──
+async function checkWizardStatus(){
+  try {
+    const meRes = await api('/me');
+    if (!meRes || !meRes.user) return;
+    // Assistants (Aspen) never get bounced to the owner wizard
+    if (meRes.user.role === 'assistant') return;
+    const s = await api('/wizard/status');
+    if (s && !s.completed_at) {
+      location.href = '/handy/wizard';
+    }
+  } catch(_e){}
+}
+
+// Boot
+checkWizardStatus();
+loadMe();loadOverview();loadLegalTip(false);loadTodoList();startTodoPoller();
+</script>
+</body>
+</html>

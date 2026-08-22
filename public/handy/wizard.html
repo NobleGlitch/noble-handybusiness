@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Welcome — Handy Tucson</title>
+<meta name="theme-color" content="#FAF6EF">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#FAF6EF;--surface:#fff;--surface-2:#F3EEE4;--ink:#2A2622;--ink-soft:#6A6560;--hair:#E4DED2;--blue:#3B6E8F;--blue-ink:#29506A;--orange:#E8955A;--sage:#6B9F72;--clay:#B85450}
+html,body{min-height:100%;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.5}
+body{padding:0;padding-bottom:env(safe-area-inset-bottom)}
+
+.hdr{padding:18px 24px;background:#fff;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:12px}
+.hdr .brand{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:18px;color:var(--ink)}
+.hdr .spacer{flex:1}
+.hdr .skip-all{color:var(--ink-soft);font-size:12px;text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit}
+.hdr .skip-all:hover{color:var(--clay)}
+
+.wrap{max-width:560px;margin:0 auto;padding:24px 20px 60px}
+
+.progress{background:var(--surface-2);border-radius:999px;height:8px;overflow:hidden;margin-bottom:8px}
+.progress .bar{height:100%;background:linear-gradient(90deg,var(--orange) 0%,#B96B33 100%);border-radius:999px;transition:width 300ms ease}
+.progress-label{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:24px;text-align:center;font-weight:600}
+
+.card{background:var(--surface);border-radius:14px;padding:26px 22px;box-shadow:0 1px 2px rgba(42,38,34,.04),0 4px 20px rgba(42,38,34,.06)}
+.card h1{font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.2}
+.card .why{color:var(--ink-soft);font-size:14px;margin-bottom:20px;line-height:1.5}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;font-weight:600}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1.5px solid var(--hair);border-radius:8px;font-size:15px;color:var(--ink);background:#fff;font-family:inherit;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--blue)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 22px;border-radius:999px;font-size:15px;font-weight:600;border:1px solid transparent;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit;text-decoration:none;min-height:48px}
+.btn:hover{background:var(--blue-ink)}
+.btn:disabled{opacity:0.55;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--hair)}
+.btn.ghost:hover{background:var(--surface-2);color:var(--ink)}
+.btn.warm{background:var(--orange)}.btn.warm:hover{background:#D07D42}
+.btn.sage{background:var(--sage)}.btn.sage:hover{background:#568659}
+.btn.block{width:100%}
+
+.actions{display:flex;justify-content:space-between;gap:10px;margin-top:22px;align-items:center;flex-wrap:wrap}
+.actions .left{display:flex;gap:8px;align-items:center}
+
+.skip-step{color:var(--ink-soft);font-size:12px;text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit;padding:8px 4px}
+.skip-step:hover{color:var(--orange)}
+
+.step{display:none}
+.step.on{display:block;animation:fade 250ms ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.hint{font-size:12px;color:var(--ink-soft);margin-top:6px}
+.err{background:rgba(184,84,80,0.10);color:var(--clay);border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:14px;display:none}
+.err.on{display:block}
+
+.geocode-status{font-size:12px;color:var(--sage);margin-top:6px;display:none}
+.geocode-status.on{display:block}
+.geocode-status.fail{color:var(--clay)}
+
+.done-hero{text-align:center;padding:20px 10px 10px}
+.done-hero .big{font-family:'Fraunces',serif;font-size:56px;line-height:1;margin-bottom:14px}
+.done-hero h1{font-family:'Fraunces',serif;font-size:28px;margin-bottom:10px;color:var(--ink)}
+.done-hero p{color:var(--ink-soft);font-size:15px;margin-bottom:22px}
+
+.pill-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px}
+.pill-tag{background:var(--surface-2);color:var(--ink);padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600}
+.pill-tag.done{background:rgba(107,159,114,0.14);color:var(--sage)}
+.pill-tag.skipped{background:rgba(184,84,80,0.10);color:var(--clay)}
+
+.cust-picker{background:var(--surface-2);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:13px;color:var(--ink-soft)}
+.cust-picker strong{color:var(--ink)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 22px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity 200ms;z-index:150;box-shadow:0 6px 24px rgba(42,38,34,.3)}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <span class="brand">Handy Tucson · Setup</span>
+  <span class="spacer"></span>
+  <button class="skip-all" onclick="skipAll()">Skip setup for now →</button>
+</header>
+
+<main class="wrap">
+
+<div class="progress"><div class="bar" id="progressBar" style="width:16.6%"></div></div>
+<div class="progress-label" id="progressLabel">Step 1 of 6</div>
+
+<!-- STEP 1 — Welcome + business info -->
+<section class="step on" data-step="1">
+  <div class="card">
+    <h1>Welcome to Handy Tucson.</h1>
+    <p class="why">Let's spend 3 minutes getting your shop set up so invoices, texts, and the map all look right from day one. First — what should the app show as your business?</p>
+    <div class="err" id="err1"></div>
+    <div class="field">
+      <label>Business name</label>
+      <input id="w_biz" type="text" placeholder="Danny's Handyman Service" autocomplete="organization">
+      <div class="hint">Shown on invoices, receipts, and customer texts.</div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Business phone</label>
+        <input id="w_bizphone" type="tel" placeholder="(520) 555-0100" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label>Business email</label>
+        <input id="w_bizemail" type="email" placeholder="danny@handytucson.tech" autocomplete="email">
+      </div>
+    </div>
+    <div class="actions">
+      <div class="left"><button class="skip-step" onclick="nextStep(true)">Skip this step</button></div>
+      <button class="btn" onclick="saveStep1()">Continue →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 2 — Home base address -->
+<section class="step" data-step="2">
+  <div class="card">
+    <h1>Where do you start your day?</h1>
+    <p class="why">Your home or shop address anchors the Route map and drive-time math. Customers never see this address — it's only used to plan your day.</p>
+    <div class="err" id="err2"></div>
+    <div class="field">
+      <label>Home / shop address</label>
+      <input id="w_home" type="text" placeholder="1234 E Broadway Blvd, Tucson AZ 85719" autocomplete="street-address">
+      <div class="hint">Street, city, state, ZIP works best.</div>
+      <div class="geocode-status" id="geoStatus"></div>
+    </div>
+    <div class="actions">
+      <div class="left">
+        <button class="btn ghost" onclick="prevStep()">← Back</button>
+        <button class="skip-step" onclick="nextStep(true)">Skip</button>
+      </div>
+      <button class="btn" onclick="saveStep2()">Continue →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 3 — First customer -->
+<section class="step" data-step="3">
+  <div class="card">
+    <h1>Add your first customer.</h1>
+    <p class="why">Even one real customer makes everything else click — the customer list, jobs, invoices, and follow-up reminders all key off this. You can add more later on the Customers tab.</p>
+    <div class="err" id="err3"></div>
+    <div class="field">
+      <label>Customer name</label>
+      <input id="w_custname" type="text" placeholder="Sarah Miller" autocomplete="name">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Phone</label>
+        <input id="w_custphone" type="tel" placeholder="(520) 555-0111" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label>Email <span style="text-transform:none;color:var(--ink-soft);font-weight:400">(optional)</span></label>
+        <input id="w_custemail" type="email" placeholder="sarah@example.com" autocomplete="email">
+      </div>
+    </div>
+    <div class="field">
+      <label>Address</label>
+      <input id="w_custaddr" type="text" placeholder="123 E Broadway, Tucson AZ 85719" autocomplete="street-address">
+      <div class="hint">Used for the Route map and drive-time gap checks.</div>
+    </div>
+    <div class="actions">
+      <div class="left">
+        <button class="btn ghost" onclick="prevStep()">← Back</button>
+        <button class="skip-step" onclick="nextStep(true)">Skip</button>
+      </div>
+      <button class="btn" onclick="saveStep3()">Continue →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 4 — First job -->
+<section class="step" data-step="4">
+  <div class="card">
+    <h1>Book your first job.</h1>
+    <p class="why">Scheduling a job wires up the reminders (T-24h + T-1h), routes it on the map, and gives you something to invoice from. Even a placeholder job is fine — you can edit it later.</p>
+    <div class="err" id="err4"></div>
+    <div id="w_custpicker_wrap">
+      <div class="field">
+        <label>Customer</label>
+        <select id="w_jobcust"></select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Job title</label>
+      <input id="w_jobtitle" type="text" placeholder="Ceiling fan install">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Scheduled for</label>
+        <input id="w_jobsched" type="datetime-local">
+      </div>
+      <div class="field">
+        <label>Priority</label>
+        <select id="w_jobprio">
+          <option value="normal" selected>Normal</option>
+          <option value="high">High</option>
+          <option value="urgent">Urgent</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions">
+      <div class="left">
+        <button class="btn ghost" onclick="prevStep()">← Back</button>
+        <button class="skip-step" onclick="nextStep(true)">Skip</button>
+      </div>
+      <button class="btn" onclick="saveStep4()">Continue →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 5 — Payment handles -->
+<section class="step" data-step="5">
+  <div class="card">
+    <h1>How should customers pay you?</h1>
+    <p class="why">These show up as tappable links on every invoice. Fill in the ones you actually use — leave the others blank. You can change these anytime under Me → Payment handles.</p>
+    <div class="err" id="err5"></div>
+    <div class="field">
+      <label>PayPal.me link</label>
+      <input id="w_paypal" type="text" placeholder="paypal.me/dannyhandy">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Venmo @</label>
+        <input id="w_venmo" type="text" placeholder="@dannyhandy">
+      </div>
+      <div class="field">
+        <label>Cash App $</label>
+        <input id="w_cashapp" type="text" placeholder="$dannyhandy">
+      </div>
+    </div>
+    <div class="actions">
+      <div class="left">
+        <button class="btn ghost" onclick="prevStep()">← Back</button>
+        <button class="skip-step" onclick="nextStep(true)">Skip</button>
+      </div>
+      <button class="btn" onclick="saveStep5()">Continue →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 6 — Done -->
+<section class="step" data-step="6">
+  <div class="card">
+    <div class="done-hero">
+      <div class="big">🎯</div>
+      <h1>You're set up.</h1>
+      <p>Everything below is stored and ready. Any of these you skipped you can fill in later on the Me tab.</p>
+    </div>
+    <div class="pill-list" id="donePills"></div>
+    <button class="btn warm block" onclick="finishWizard()">Open my dashboard →</button>
+  </div>
+</section>
+
+</main>
+
+<div class="toast" id="toast">saved</div>
+
+<script>
+// ── STATE ──
+let currentStep = 1;
+const TOTAL_STEPS = 6;
+const stepStatus = {1:'pending',2:'pending',3:'pending',4:'pending',5:'pending'};
+let createdCustomerId = null;
+let existingCustomers = [];
+
+const $ = id => document.getElementById(id);
+const toast = (msg, ms=1800) => {
+  const t = $('toast'); t.textContent = msg; t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), ms);
+};
+async function api(path, opts={}) {
+  const r = await fetch('/handy/api' + path, {
+    credentials: 'include',
+    headers: {'Content-Type':'application/json'},
+    ...opts
+  });
+  if (r.status === 401) { location.href = '/handy/login'; return null; }
+  return r.json();
+}
+
+// ── STEP NAV ──
+function showStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.step').forEach(s => s.classList.toggle('on', +s.dataset.step === n));
+  const pct = Math.round((n / TOTAL_STEPS) * 100);
+  $('progressBar').style.width = pct + '%';
+  $('progressLabel').textContent = n === TOTAL_STEPS ? 'All done' : `Step ${n} of ${TOTAL_STEPS}`;
+  if (n === 4) hydrateCustomerPicker();
+  if (n === 6) renderDonePills();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function nextStep(skipped) {
+  if (skipped && currentStep <= 5) stepStatus[currentStep] = 'skipped';
+  if (currentStep < TOTAL_STEPS) showStep(currentStep + 1);
+}
+function prevStep() {
+  if (currentStep > 1) showStep(currentStep - 1);
+}
+function showErr(id, msg) {
+  const el = $(id); if (!el) return;
+  el.textContent = msg; el.classList.add('on');
+  setTimeout(() => el.classList.remove('on'), 4000);
+}
+
+// ── PREFILL from /me if any fields already set ──
+async function prefill() {
+  const d = await api('/me');
+  if (!d || !d.user) return;
+  const u = d.user;
+  if (u.business_name) $('w_biz').value = u.business_name;
+  if (u.business_phone) $('w_bizphone').value = u.business_phone;
+  if (u.business_email) $('w_bizemail').value = u.business_email;
+  if (u.home_address) $('w_home').value = u.home_address;
+  if (u.paypal_me) $('w_paypal').value = u.paypal_me;
+  if (u.venmo) $('w_venmo').value = u.venmo;
+  if (u.cashapp) $('w_cashapp').value = u.cashapp;
+}
+
+// ── STEP 1 — Business info ──
+async function saveStep1() {
+  const body = {
+    business_name: $('w_biz').value.trim(),
+    business_phone: $('w_bizphone').value.trim(),
+    business_email: $('w_bizemail').value.trim()
+  };
+  if (!body.business_name && !body.business_phone && !body.business_email) {
+    showErr('err1', 'Please fill in at least the business name — or tap Skip.');
+    return;
+  }
+  const r = await api('/me', {method:'POST', body: JSON.stringify(body)});
+  if (r && r.ok) {
+    stepStatus[1] = 'done';
+    toast('Business info saved');
+    nextStep(false);
+  } else {
+    showErr('err1', 'Save failed. Try again.');
+  }
+}
+
+// ── STEP 2 — Home base ──
+async function saveStep2() {
+  const home_address = $('w_home').value.trim();
+  if (!home_address) {
+    showErr('err2', 'Please enter an address, or tap Skip.');
+    return;
+  }
+  const gs = $('geoStatus');
+  gs.textContent = 'Locating on map…';
+  gs.className = 'geocode-status on';
+  const r = await api('/me', {method:'POST', body: JSON.stringify({home_address})});
+  if (r && r.ok) {
+    // Verify geocode landed (the POST /me auto-geocodes; re-fetch to confirm)
+    const chk = await api('/me');
+    if (chk && chk.user && chk.user.home_lat && chk.user.home_lat !== 32.2226) {
+      gs.textContent = '✓ Located on the map';
+      gs.className = 'geocode-status on';
+    } else {
+      gs.textContent = 'Saved, but couldn\'t place on map — you can refine in Me → Home base.';
+      gs.className = 'geocode-status on fail';
+    }
+    stepStatus[2] = 'done';
+    toast('Home base saved');
+    setTimeout(() => nextStep(false), 500);
+  } else {
+    showErr('err2', 'Save failed. Try again.');
+  }
+}
+
+// ── STEP 3 — First customer ──
+async function saveStep3() {
+  const name = $('w_custname').value.trim();
+  if (!name) {
+    showErr('err3', 'Customer name is required, or tap Skip.');
+    return;
+  }
+  const body = {
+    name,
+    phone: $('w_custphone').value.trim(),
+    email: $('w_custemail').value.trim(),
+    address: $('w_custaddr').value.trim(),
+    city: 'Tucson',
+    state: 'AZ'
+  };
+  const r = await api('/customers', {method:'POST', body: JSON.stringify(body)});
+  if (r && r.ok && r.id) {
+    createdCustomerId = r.id;
+    stepStatus[3] = 'done';
+    toast('Customer added');
+    nextStep(false);
+  } else {
+    showErr('err3', 'Save failed. Try again.');
+  }
+}
+
+// ── STEP 4 — First job ──
+async function hydrateCustomerPicker() {
+  const d = await api('/customers');
+  existingCustomers = (d && d.customers) ? d.customers : [];
+  const sel = $('w_jobcust');
+  if (existingCustomers.length === 0) {
+    $('w_custpicker_wrap').innerHTML = '<div class="cust-picker"><strong>No customers yet.</strong> Go back to Step 3 or skip this step — you can create jobs anytime.</div>';
+    return;
+  }
+  sel.innerHTML = existingCustomers.map(c =>
+    `<option value="${c.id}" ${c.id === createdCustomerId ? 'selected' : ''}>${escHtml(c.name)}</option>`
+  ).join('');
+  // Default the scheduled_at to tomorrow 9am (Phoenix-local) for a sane placeholder
+  if (!$('w_jobsched').value) {
+    const t = new Date(); t.setDate(t.getDate() + 1); t.setHours(9,0,0,0);
+    const iso = t.getFullYear() + '-' + pad(t.getMonth()+1) + '-' + pad(t.getDate()) + 'T' + pad(t.getHours()) + ':' + pad(t.getMinutes());
+    $('w_jobsched').value = iso;
+  }
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+async function saveStep4() {
+  if (existingCustomers.length === 0) {
+    showErr('err4', 'No customers — go back and add one, or tap Skip.');
+    return;
+  }
+  const customer_id = parseInt($('w_jobcust').value, 10);
+  const title = $('w_jobtitle').value.trim();
+  if (!customer_id || !title) {
+    showErr('err4', 'Pick a customer and enter a job title, or tap Skip.');
+    return;
+  }
+  const sched = $('w_jobsched').value;
+  const scheduled_at = sched ? sched.replace('T', ' ') + ':00' : null;
+  const body = { customer_id, title, priority: $('w_jobprio').value, scheduled_at };
+  const r = await api('/jobs', {method:'POST', body: JSON.stringify(body)});
+  if (r && r.ok) {
+    stepStatus[4] = 'done';
+    toast('Job created');
+    nextStep(false);
+  } else {
+    showErr('err4', 'Save failed. Try again.');
+  }
+}
+
+// ── STEP 5 — Payment handles ──
+async function saveStep5() {
+  const body = {
+    paypal_me: $('w_paypal').value.trim(),
+    venmo: $('w_venmo').value.trim(),
+    cashapp: $('w_cashapp').value.trim()
+  };
+  if (!body.paypal_me && !body.venmo && !body.cashapp) {
+    showErr('err5', 'Add at least one payment handle, or tap Skip.');
+    return;
+  }
+  const r = await api('/me', {method:'POST', body: JSON.stringify(body)});
+  if (r && r.ok) {
+    stepStatus[5] = 'done';
+    toast('Payment handles saved');
+    nextStep(false);
+  } else {
+    showErr('err5', 'Save failed. Try again.');
+  }
+}
+
+// ── STEP 6 — Done ──
+function renderDonePills() {
+  const labels = {1:'Business',2:'Home base',3:'First customer',4:'First job',5:'Payment handles'};
+  $('donePills').innerHTML = Object.keys(labels).map(k => {
+    const st = stepStatus[k] || 'pending';
+    const cls = st === 'done' ? 'done' : (st === 'skipped' ? 'skipped' : '');
+    const mark = st === 'done' ? '✓ ' : (st === 'skipped' ? '⤳ ' : '');
+    return `<span class="pill-tag ${cls}">${mark}${labels[k]}</span>`;
+  }).join('');
+}
+
+async function finishWizard() {
+  const anyDone = Object.values(stepStatus).some(v => v === 'done');
+  await api('/wizard/complete', {method:'POST', body: JSON.stringify({skipped: !anyDone})});
+  toast('Welcome aboard!');
+  setTimeout(() => { location.href = '/handy/dashboard'; }, 700);
+}
+
+// ── FULL SKIP ──
+async function skipAll() {
+  if (!confirm('Skip setup for now? You can fill in these details anytime under the Me tab.')) return;
+  await api('/wizard/complete', {method:'POST', body: JSON.stringify({skipped: true})});
+  location.href = '/handy/dashboard';
+}
+
+// ── BOOT ──
+(async function() {
+  // If wizard already completed, bounce to dashboard (prevents replay loops)
+  const s = await api('/wizard/status');
+  if (s && s.completed_at) {
+    location.href = '/handy/dashboard';
+    return;
+  }
+  await prefill();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+services:
+  handybusiness:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required — set it in your .env}
+      PORT: 3000
+      DB_PATH: /app/data/handy.db
+      SIGNALWIRE_PROJECT_ID: ${SIGNALWIRE_PROJECT_ID:-}
+      SIGNALWIRE_TOKEN: ${SIGNALWIRE_TOKEN:-}
+      SIGNALWIRE_SPACE: ${SIGNALWIRE_SPACE:-}
+      SIGNALWIRE_FROM_NUMBER: ${SIGNALWIRE_FROM_NUMBER:-}
+      OPERATOR_CELL: ${OPERATOR_CELL:-}
+      PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID:-}
+      PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET:-}
+      PAYPAL_ENV: ${PAYPAL_ENV:-live}
+      GOOGLE_MAPS_KEY: ${GOOGLE_MAPS_KEY:-}
+      OLLAMA_URL: ${OLLAMA_URL:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-}
+    volumes:
+      - handy-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  handy-data:

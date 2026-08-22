@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sign in — Danny McKay Handyman</title>
+<meta name="theme-color" content="#FAF6EF">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#FAF6EF;color:#2A2622;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+body{padding:24px 20px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.wrap{max-width:400px;width:100%}
+.back{color:#6A6560;text-decoration:none;font-size:13px;display:inline-block;margin-bottom:20px}
+.card{background:#fff;border-radius:16px;padding:32px 28px;box-shadow:0 2px 12px rgba(42,38,34,0.06)}
+h1{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:#B96B33;margin-bottom:20px;text-align:center}
+.field{margin-bottom:14px}
+label{display:block;font-size:12px;color:#6A6560;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;font-weight:600}
+input{width:100%;padding:14px 16px;border:1.5px solid #E4DED2;border-radius:10px;font-size:16px;color:#2A2622;background:#FAF6EF;font-family:inherit}
+input:focus{outline:none;border-color:#3B6E8F;background:#fff}
+.btn{width:100%;padding:16px;background:#3B6E8F;color:#fff;border:none;border-radius:999px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px}
+.btn:hover{background:#29506A}
+.err{color:#B85450;font-size:14px;text-align:center;margin-top:10px;min-height:18px}
+.foot{text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid #E4DED2;color:#6A6560;font-size:14px}
+.foot a{color:#3B6E8F;font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="/" class="back">← back to home</a>
+  <div class="card">
+    <h1>Welcome back</h1>
+    <form onsubmit="event.preventDefault(); login();">
+      <div class="field"><label>Email</label><input id="l_email" type="email" autocomplete="email" autofocus required></div>
+      <div class="field"><label>Password</label><input id="l_pw" type="password" autocomplete="current-password" required></div>
+      <button class="btn" id="btn" type="submit">Sign in</button>
+      <div class="err" id="err"></div>
+    </form>
+    <div class="foot">New here? <a href="/portal/signup">Create an account</a></div>
+  </div>
+</div>
+<script>
+async function login(){
+  const err=document.getElementById('err'),btn=document.getElementById('btn');
+  err.textContent='';btn.disabled=true;btn.textContent='Signing in…';
+  try{
+    const r=await fetch('/handy/api/portal/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({email:document.getElementById('l_email').value.trim(),password:document.getElementById('l_pw').value})});
+    const d=await r.json();
+    if(d.ok){location.href='/portal';}else{err.textContent=d.error||'Sign in failed';btn.disabled=false;btn.textContent='Sign in';}
+  }catch(e){err.textContent='Network error';btn.disabled=false;btn.textContent='Sign in';}
+}
+</script>
+</body>
+</html>

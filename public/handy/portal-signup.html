@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sign up — Danny McKay Handyman</title>
+<meta name="theme-color" content="#FAF6EF">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#FAF6EF;color:#2A2622;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+body{padding:24px 20px 40px;display:flex;flex-direction:column;align-items:center}
+.wrap{max-width:480px;width:100%}
+.back{color:#6A6560;text-decoration:none;font-size:13px;display:inline-block;margin-bottom:20px}
+.back:hover{color:#B96B33}
+.card{background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 2px 12px rgba(42,38,34,0.06)}
+h1{font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:#B96B33;margin-bottom:6px}
+.sub{color:#6A6560;font-size:15px;margin-bottom:22px}
+.field{margin-bottom:14px}
+label{display:block;font-size:12px;color:#6A6560;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;font-weight:600}
+input,select{width:100%;padding:14px 16px;border:1.5px solid #E4DED2;border-radius:10px;font-size:16px;color:#2A2622;background:#FAF6EF;font-family:inherit;-webkit-appearance:none}
+input:focus,select:focus{outline:none;border-color:#3B6E8F;background:#fff}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{width:100%;padding:16px;background:#E8955A;color:#fff;border:none;border-radius:999px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px}
+.btn:hover{background:#B96B33}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.err{color:#B85450;font-size:14px;text-align:center;margin-top:10px;min-height:18px}
+.foot{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E4DED2;color:#6A6560;font-size:14px}
+.foot a{color:#3B6E8F;font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="/" class="back">← back to home</a>
+  <div class="card">
+    <h1>Create your account</h1>
+    <div class="sub">Sign up to book Danny, open tickets, and see your job history.</div>
+
+    <form onsubmit="event.preventDefault(); signup();">
+      <div class="field"><label>Full name *</label><input id="s_name" autocomplete="name" required></div>
+      <div class="field"><label>Email *</label><input id="s_email" type="email" autocomplete="email" required></div>
+      <div class="field"><label>Phone *</label><input id="s_phone" type="tel" autocomplete="tel" placeholder="(520) 555-0123" required></div>
+      <div class="field"><label>Home address</label><input id="s_addr" placeholder="123 E Broadway, Unit 4B"></div>
+      <div class="row2">
+        <div class="field"><label>City</label><input id="s_city" value="Tucson"></div>
+        <div class="field"><label>ZIP</label><input id="s_zip" inputmode="numeric"></div>
+      </div>
+      <div class="field"><label>Community / HOA / Park (optional)</label><input id="s_comm" placeholder="e.g. Voyager RV Resort, Sun City Vistoso"></div>
+      <div class="field"><label>Password *</label><input id="s_pw" type="password" autocomplete="new-password" minlength="6" required placeholder="At least 6 characters"></div>
+
+      <button class="btn" id="btn" type="submit">Sign up →</button>
+      <div class="err" id="err"></div>
+    </form>
+
+    <div class="foot">Already have an account? <a href="/portal/login">Sign in</a></div>
+  </div>
+</div>
+<script>
+async function signup(){
+  const err=document.getElementById('err'),btn=document.getElementById('btn');
+  err.textContent='';btn.disabled=true;btn.textContent='Creating account…';
+  const payload={
+    name:document.getElementById('s_name').value.trim(),
+    email:document.getElementById('s_email').value.trim(),
+    phone:document.getElementById('s_phone').value.trim(),
+    address:document.getElementById('s_addr').value.trim(),
+    city:document.getElementById('s_city').value.trim(),
+    zip:document.getElementById('s_zip').value.trim(),
+    community:document.getElementById('s_comm').value.trim(),
+    password:document.getElementById('s_pw').value
+  };
+  if(!payload.name||!payload.email||!payload.phone||!payload.password){err.textContent='Name, email, phone, and password are required.';btn.disabled=false;btn.textContent='Sign up →';return}
+  try{
+    const r=await fetch('/handy/api/portal/signup',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
+    const d=await r.json();
+    if(d.ok){location.href='/portal';}else{err.textContent=d.error||'Sign up failed';btn.disabled=false;btn.textContent='Sign up →';}
+  }catch(e){err.textContent='Network error — please try again.';btn.disabled=false;btn.textContent='Sign up →';}
+}
+</script>
+</body>
+</html>

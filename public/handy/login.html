@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sign in — Handy</title>
+<meta name="theme-color" content="#FAF6EF">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; background: #FAF6EF; color: #2A2622; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.card { background: #fff; border-radius: 16px; padding: 36px 28px; max-width: 400px; width: 100%; box-shadow: 0 4px 20px rgba(42,38,34,0.06); }
+h1 { font-family: 'Fraunces', Georgia, serif; font-size: 28px; margin-bottom: 4px; color: #2A2622; }
+.sub { color: #6A6560; font-size: 14px; margin-bottom: 24px; }
+label { display: block; font-size: 12px; color: #6A6560; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; margin-top: 14px; font-weight: 500; }
+input { width: 100%; padding: 14px 16px; border: 1.5px solid #E4DED2; border-radius: 8px; font-size: 16px; color: #2A2622; background: #FAF6EF; font-family: inherit; }
+input:focus { outline: none; border-color: #3B6E8F; }
+button { width: 100%; padding: 16px; background: #3B6E8F; color: #fff; border: none; border-radius: 999px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px; letter-spacing: 0.02em; font-family: inherit; }
+button:hover { background: #29506A; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.err { color: #B85450; font-size: 13px; margin-top: 12px; text-align: center; min-height: 16px; }
+.hint { color: #6A6560; font-size: 12px; text-align: center; margin-top: 18px; padding-top: 16px; border-top: 1px solid #E4DED2; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <form class="card" onsubmit="event.preventDefault(); login();">
+    <h1>Handy Dashboard</h1>
+    <div class="sub">Sign in to manage jobs, customers, and invoices.</div>
+    <label for="u">Username</label>
+    <input id="u" type="text" autocomplete="username" autofocus>
+    <label for="p">Password</label>
+    <input id="p" type="password" autocomplete="current-password">
+    <button type="submit" id="btn">Sign in</button>
+    <div class="err" id="err"></div>
+    <div class="hint">First time? Default is <strong>handy / handy2026</strong> — change your password in Settings after signing in.</div>
+  </form>
+</div>
+<script>
+async function login(){
+  const u = document.getElementById('u').value.trim();
+  const p = document.getElementById('p').value;
+  const btn = document.getElementById('btn'); const err = document.getElementById('err');
+  err.textContent = ''; btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    const r = await fetch('/handy/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ username: u, password: p }) });
+    const d = await r.json();
+    if (d.ok) location.href = d.redirect || '/handy/dashboard';
+    else { err.textContent = d.error || 'Sign in failed'; btn.disabled = false; btn.textContent = 'Sign in'; }
+  } catch(e){ err.textContent = 'Network error'; btn.disabled = false; btn.textContent = 'Sign in'; }
+}
+</script>
+</body>
+</html>

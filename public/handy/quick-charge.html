@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quick Charge · Handy</title>
+<meta name="theme-color" content="#FAF6EF">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#FAF6EF;color:#2A2622;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:16px;min-height:100%}
+body{padding:20px 18px 40px;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+:root{--bg:#FAF6EF;--surface:#fff;--surface-2:#F3EEE4;--ink:#2A2622;--ink-soft:#6A6560;--hair:#E4DED2;--blue:#3B6E8F;--blue-ink:#29506A;--orange:#E8955A;--orange-ink:#B96B33;--sage:#6B9F72;--clay:#B85450}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.top .brand{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:18px;color:var(--ink)}
+.top .brand span{color:var(--orange-ink)}
+.top a{color:var(--ink-soft);font-size:13px;text-decoration:none;padding:8px 14px;border-radius:20px;border:1px solid var(--hair)}
+h1{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:2px;line-height:1.15}
+.sub{color:var(--ink-soft);font-size:14px;margin-bottom:22px}
+
+.step{background:#fff;border-radius:14px;padding:18px 18px 22px;margin-bottom:14px;box-shadow:0 1px 2px rgba(42,38,34,.04),0 2px 8px rgba(42,38,34,.03)}
+.step .stepnum{display:inline-block;background:var(--orange);color:#fff;font-weight:700;font-size:12px;padding:3px 10px;border-radius:20px;letter-spacing:0.06em;margin-bottom:8px}
+.step h2{font-family:'Fraunces',serif;font-size:19px;color:var(--ink);margin-bottom:14px}
+label{display:block;font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;font-weight:600}
+input,select,textarea{width:100%;padding:16px 14px;border:1.5px solid var(--hair);border-radius:10px;font-size:16px;color:var(--ink);background:#fff;font-family:inherit;-webkit-appearance:none;min-height:56px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+.field{margin-bottom:14px}
+.btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:18px 20px;border-radius:14px;font-size:17px;font-weight:700;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit;min-height:60px}
+.btn:disabled{opacity:0.55;cursor:not-allowed}
+.btn.warm{background:var(--orange)}
+.btn.sage{background:var(--sage)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--hair)}
+.btn.mega{font-size:20px;padding:22px 20px;min-height:72px;box-shadow:0 8px 24px rgba(232,149,90,.30)}
+.pill{display:inline-block;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;background:var(--surface-2);color:var(--ink-soft)}
+.pill.on{background:var(--sage);color:#fff}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.hint{color:var(--ink-soft);font-size:13px;line-height:1.4;margin-top:8px}
+.total-preview{background:linear-gradient(135deg,var(--orange) 0%,var(--orange-ink) 100%);color:#fff;border-radius:14px;padding:20px;text-align:center;margin-bottom:14px}
+.total-preview .k{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;opacity:0.85;margin-bottom:6px}
+.total-preview .v{font-family:'Fraunces',serif;font-size:38px;font-weight:700;line-height:1}
+.total-preview .breakdown{margin-top:6px;font-size:12px;opacity:0.9}
+.cust-suggest{background:#FFFBF3;border:1px solid var(--hair);border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto}
+.cust-suggest .row{padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--hair);font-size:15px}
+.cust-suggest .row:last-child{border:none}
+.cust-suggest .row:hover{background:var(--surface-2)}
+.cust-suggest .row .n{font-weight:600;color:var(--ink)}
+.cust-suggest .row .p{color:var(--ink-soft);font-size:13px;margin-top:2px}
+.cust-picked{background:var(--sage);color:#fff;padding:14px 16px;border-radius:10px;display:flex;justify-content:space-between;align-items:center}
+.cust-picked .name{font-weight:700}
+.cust-picked button{background:rgba(255,255,255,0.25);color:#fff;border:none;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+.hidden{display:none}
+.toggle-row{display:flex;gap:8px;margin-bottom:12px}
+.toggle-row button{flex:1;padding:12px 8px;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;background:var(--surface-2);border:1.5px solid var(--surface-2);color:var(--ink-soft);cursor:pointer;min-height:52px}
+.toggle-row button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.success{background:#fff;border-radius:14px;padding:32px 20px;text-align:center;box-shadow:0 4px 20px rgba(107,159,114,.15);border-top:6px solid var(--sage)}
+.success .checkmark{font-size:48px;margin-bottom:10px}
+.success h2{font-family:'Fraunces',serif;font-size:22px;color:var(--ink);margin-bottom:8px}
+.success .amt{font-family:'Fraunces',serif;font-size:32px;font-weight:700;color:var(--orange-ink);margin:10px 0}
+.success .paypal-hint{color:var(--ink-soft);font-size:13px;margin-bottom:20px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 22px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity 200ms;z-index:150}
+.toast.on{opacity:1}
+.err{color:var(--clay);font-size:13px;margin-top:8px}
+@media (min-width:700px){body{max-width:600px;margin:0 auto}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">Quick <span>Charge</span></div>
+  <a href="/handy/dashboard">← Dashboard</a>
+</div>
+
+<h1>Finish this job in 60 seconds.</h1>
+<p class="sub">Log hours + materials, generate the invoice, text the customer the pay link. That's it.</p>
+
+<!-- STEP A: customer -->
+<div class="step" id="stepA">
+  <span class="stepnum">STEP 1</span>
+  <h2>Who is this for?</h2>
+
+  <div id="custSelectBlock">
+    <div class="field">
+      <label>Search customers</label>
+      <input id="custSearch" type="text" placeholder="Type name or phone…" autocomplete="off" oninput="onCustSearch()">
+      <div id="custSuggest" class="cust-suggest hidden"></div>
+    </div>
+    <button class="btn ghost" onclick="showNewCust()">+ Quick-add new customer</button>
+  </div>
+
+  <div id="custPickedBlock" class="hidden">
+    <div class="cust-picked">
+      <div>
+        <div class="name" id="custPickedName">—</div>
+        <div id="custPickedPhone" style="font-size:13px;opacity:0.9"></div>
+      </div>
+      <button onclick="clearCust()">Change</button>
+    </div>
+  </div>
+
+  <div id="newCustBlock" class="hidden" style="margin-top:12px">
+    <div class="field">
+      <label>Customer name *</label>
+      <input id="newCustName" type="text" placeholder="First Last">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Phone</label>
+        <input id="newCustPhone" type="tel" placeholder="520…">
+      </div>
+      <div class="field">
+        <label>Email (optional)</label>
+        <input id="newCustEmail" type="email" placeholder="—">
+      </div>
+    </div>
+    <div class="field">
+      <label>Address (optional)</label>
+      <input id="newCustAddress" type="text" placeholder="street">
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn ghost" onclick="cancelNewCust()">Cancel</button>
+      <button class="btn" onclick="useNewCust()">Use this customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP B: job -->
+<div class="step" id="stepB">
+  <span class="stepnum">STEP 2</span>
+  <h2>What did you do?</h2>
+
+  <div class="field">
+    <label>Job title *</label>
+    <input id="jobTitle" type="text" placeholder="e.g. Kitchen faucet install" oninput="recalc()">
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Hours worked *</label>
+      <input id="jobHours" type="number" step="0.25" value="1.5" oninput="recalc()">
+    </div>
+    <div class="field">
+      <label>Rate ($/hr)</label>
+      <input id="jobRate" type="number" step="1" oninput="recalc()">
+    </div>
+  </div>
+
+  <div class="toggle-row">
+    <button id="matToggleN" class="on" onclick="setMat(false)">No materials</button>
+    <button id="matToggleY" onclick="setMat(true)">+ Materials line</button>
+  </div>
+
+  <div id="matBlock" class="hidden">
+    <div class="row2">
+      <div class="field">
+        <label>Item</label>
+        <input id="matItem" type="text" placeholder="e.g. new faucet" oninput="recalc()">
+      </div>
+      <div class="field">
+        <label>Your cost ($)</label>
+        <input id="matCost" type="number" step="0.01" oninput="recalc()">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP C: generate -->
+<div class="total-preview">
+  <div class="k">Total</div>
+  <div class="v" id="totalPreview">$0.00</div>
+  <div class="breakdown" id="totalBreak"></div>
+</div>
+
+<button id="genBtn" class="btn mega warm" onclick="generateInvoice()">GENERATE INVOICE →</button>
+<div class="err" id="genErr" style="display:none"></div>
+
+<!-- STEP D: send success -->
+<div id="successBlock" class="success hidden" style="margin-top:20px">
+  <div class="checkmark">✓</div>
+  <h2>Invoice ready!</h2>
+  <div class="amt" id="successAmt">$0.00</div>
+  <div class="paypal-hint" id="successHint">Customer pays via PayPal / Venmo / Cash App — you keep everything after processing fees.</div>
+  <div class="split">
+    <button class="btn warm" onclick="sendInvoice('email')">📧 Email invoice</button>
+    <button class="btn sage" onclick="sendInvoice('sms')">💬 Text invoice</button>
+  </div>
+  <div style="margin-top:12px">
+    <a id="viewPublicLink" href="#" target="_blank" class="btn ghost" style="text-decoration:none">👁 View public invoice</a>
+  </div>
+  <div style="margin-top:14px">
+    <button class="btn ghost" onclick="location.reload()">↺ Log another job</button>
+  </div>
+  <div id="sendStatus" style="margin-top:12px;font-size:13px;color:var(--ink-soft)"></div>
+</div>
+
+<div class="toast" id="toast">saved</div>
+
+<script>
+let me = null, pickedCustomer = null, currentInvoiceId = null, matOn = false;
+
+async function api(path, opts = {}) {
+  const r = await fetch('/handy/api' + path, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opts });
+  if (r.status === 401) { location.href = '/handy/login'; return; }
+  return r.json();
+}
+const toast = (msg, ms = 1400) => { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on'); setTimeout(() => t.classList.remove('on'), ms); };
+
+(async function boot() {
+  const d = await api('/me');
+  if (d && d.user) { me = d.user; document.getElementById('jobRate').value = me.default_hourly_rate || 65; }
+  recalc();
+})();
+
+// ── STEP A: customer picker ──
+let custSearchTimer = null;
+async function onCustSearch() {
+  clearTimeout(custSearchTimer);
+  const q = document.getElementById('custSearch').value.trim();
+  const box = document.getElementById('custSuggest');
+  if (q.length < 1) { box.classList.add('hidden'); return; }
+  custSearchTimer = setTimeout(async () => {
+    const r = await api('/customers/quick-search?q=' + encodeURIComponent(q));
+    if (!r) return;
+    const rows = r.customers || [];
+    if (rows.length === 0) { box.innerHTML = '<div class="row" style="color:var(--ink-soft);cursor:default">No matches. Use "Quick-add" below.</div>'; box.classList.remove('hidden'); return; }
+    box.innerHTML = rows.slice(0, 10).map(c =>
+      `<div class="row" onclick='pickCust(${JSON.stringify(c).replace(/'/g,"&#39;")})'><div class="n">${esc(c.name)}</div><div class="p">${esc(c.phone || '')} ${c.address ? '· ' + esc(c.address) : ''}</div></div>`
+    ).join('');
+    box.classList.remove('hidden');
+  }, 200);
+}
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function pickCust(c) {
+  pickedCustomer = c;
+  document.getElementById('custSelectBlock').classList.add('hidden');
+  document.getElementById('newCustBlock').classList.add('hidden');
+  document.getElementById('custPickedBlock').classList.remove('hidden');
+  document.getElementById('custPickedName').textContent = c.name;
+  document.getElementById('custPickedPhone').textContent = c.phone || '';
+}
+function clearCust() {
+  pickedCustomer = null;
+  document.getElementById('custPickedBlock').classList.add('hidden');
+  document.getElementById('custSelectBlock').classList.remove('hidden');
+  document.getElementById('custSearch').value = '';
+  document.getElementById('custSuggest').classList.add('hidden');
+}
+function showNewCust() {
+  document.getElementById('newCustBlock').classList.remove('hidden');
+  document.getElementById('newCustName').focus();
+}
+function cancelNewCust() {
+  document.getElementById('newCustBlock').classList.add('hidden');
+  ['newCustName', 'newCustPhone', 'newCustEmail', 'newCustAddress'].forEach(id => document.getElementById(id).value = '');
+}
+function useNewCust() {
+  const name = document.getElementById('newCustName').value.trim();
+  if (!name) { toast('Enter a name'); return; }
+  pickedCustomer = {
+    is_new: true,
+    name,
+    phone: document.getElementById('newCustPhone').value.trim(),
+    email: document.getElementById('newCustEmail').value.trim(),
+    address: document.getElementById('newCustAddress').value.trim()
+  };
+  document.getElementById('custSelectBlock').classList.add('hidden');
+  document.getElementById('newCustBlock').classList.add('hidden');
+  document.getElementById('custPickedBlock').classList.remove('hidden');
+  document.getElementById('custPickedName').textContent = pickedCustomer.name + ' (new)';
+  document.getElementById('custPickedPhone').textContent = pickedCustomer.phone || '(no phone)';
+}
+
+// ── STEP B: materials toggle ──
+function setMat(on) {
+  matOn = on;
+  document.getElementById('matToggleY').classList.toggle('on', on);
+  document.getElementById('matToggleN').classList.toggle('on', !on);
+  document.getElementById('matBlock').classList.toggle('hidden', !on);
+  recalc();
+}
+
+// ── LIVE TOTAL PREVIEW ──
+function recalc() {
+  const hrs = parseFloat(document.getElementById('jobHours').value) || 0;
+  const rate = parseFloat(document.getElementById('jobRate').value) || 0;
+  const labor = hrs * rate;
+  let mat = 0;
+  const matCost = parseFloat(document.getElementById('matCost')?.value || 0) || 0;
+  const markup = (me && me.default_material_markup_pct) || 15;
+  if (matOn && matCost > 0) mat = matCost * (1 + markup / 100);
+  const total = labor + mat;
+  document.getElementById('totalPreview').textContent = '$' + total.toFixed(2);
+  document.getElementById('totalBreak').textContent =
+    labor > 0 ? `${hrs}h × $${rate.toFixed(0)} = $${labor.toFixed(2)}` + (mat > 0 ? ` · materials $${mat.toFixed(2)}` : '') : 'Enter hours to see total';
+  document.getElementById('genBtn').textContent = total > 0 ? `GENERATE INVOICE $${total.toFixed(2)} →` : 'GENERATE INVOICE →';
+}
+
+// ── STEP C: generate ──
+async function generateInvoice() {
+  const err = document.getElementById('genErr'); err.style.display = 'none';
+  if (!pickedCustomer) { err.textContent = 'Pick or add a customer first.'; err.style.display = ''; return; }
+  const title = document.getElementById('jobTitle').value.trim();
+  if (!title) { err.textContent = 'Enter a job title.'; err.style.display = ''; return; }
+  const hours = parseFloat(document.getElementById('jobHours').value) || 0;
+  if (hours <= 0) { err.textContent = 'Hours must be > 0.'; err.style.display = ''; return; }
+  const rate = parseFloat(document.getElementById('jobRate').value) || 0;
+  const body = { title, hours, rate };
+  if (pickedCustomer.is_new) {
+    body.new_customer_name = pickedCustomer.name;
+    body.new_customer_phone = pickedCustomer.phone || '';
+    body.new_customer_email = pickedCustomer.email || '';
+    body.new_customer_address = pickedCustomer.address || '';
+  } else {
+    body.customer_id = pickedCustomer.id;
+  }
+  if (matOn) {
+    body.material_item = document.getElementById('matItem').value.trim();
+    body.material_cost = parseFloat(document.getElementById('matCost').value) || 0;
+  }
+  const btn = document.getElementById('genBtn'); btn.disabled = true; btn.textContent = 'Generating…';
+  const r = await api('/quick-charge', { method: 'POST', body: JSON.stringify(body) });
+  btn.disabled = false; recalc();
+  if (!r || !r.ok) { err.textContent = (r && r.error) || 'Generation failed'; err.style.display = ''; return; }
+  currentInvoiceId = r.invoice_id;
+  document.getElementById('successAmt').textContent = '$' + (+r.total).toFixed(2);
+  document.getElementById('viewPublicLink').href = r.public_url;
+  document.getElementById('successBlock').classList.remove('hidden');
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+// ── STEP D: send ──
+async function sendInvoice(channel) {
+  if (!currentInvoiceId) return;
+  const status = document.getElementById('sendStatus'); status.textContent = 'Sending…'; status.style.color = 'var(--ink-soft)';
+  const r = await api('/invoices/' + currentInvoiceId + '/send', { method: 'POST' });
+  if (!r) { status.textContent = 'Send failed'; status.style.color = 'var(--clay)'; return; }
+  const emailOk = r.results && r.results.email && r.results.email.ok;
+  const smsOk = r.results && r.results.sms && r.results.sms.ok;
+  if (channel === 'email' && emailOk) status.textContent = '✓ Emailed to customer';
+  else if (channel === 'sms' && smsOk) status.textContent = '✓ Texted to customer';
+  else if (emailOk || smsOk) status.textContent = '✓ Sent (' + (emailOk ? 'email' : '') + (emailOk && smsOk ? ' + ' : '') + (smsOk ? 'sms' : '') + ')';
+  else status.textContent = 'Sent — check dashboard for details';
+  status.style.color = 'var(--sage)';
+}
+</script>
+</body>
+</html>

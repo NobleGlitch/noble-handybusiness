@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>My Account — Danny McKay Handyman</title>
+<meta name="theme-color" content="#FAF6EF">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#FAF6EF;color:#2A2622;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+.top{background:#fff;padding:16px 20px;border-bottom:1px solid #E4DED2;display:flex;align-items:center;gap:12px}
+.brand{font-family:'Fraunces',serif;font-weight:700;font-size:17px;color:#B96B33}
+.out{margin-left:auto;color:#6A6560;font-size:13px;text-decoration:none;padding:6px 12px;border:1px solid #E4DED2;border-radius:999px}
+.out:hover{background:#F3EEE4}
+
+.wrap{max-width:640px;margin:0 auto;padding:20px}
+
+.hello{background:linear-gradient(135deg,#3B6E8F 0%,#29506A 100%);color:#fff;border-radius:16px;padding:20px 22px;margin-bottom:14px}
+.hello .k{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;opacity:0.9;margin-bottom:6px}
+.hello h1{font-family:'Fraunces',serif;font-size:24px;font-weight:700;margin-bottom:4px}
+.hello .who{opacity:0.9;font-size:14px}
+
+.tabs{display:flex;gap:6px;background:#fff;padding:6px;border-radius:12px;margin-bottom:14px;box-shadow:0 1px 2px rgba(42,38,34,0.04)}
+.tab{flex:1;padding:10px;background:transparent;border:none;font-family:inherit;font-size:14px;font-weight:600;color:#6A6560;cursor:pointer;border-radius:8px}
+.tab.on{background:#E8955A;color:#fff}
+
+.view{display:none}
+.view.on{display:block;animation:fade 200ms ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.book-cta{background:#fff;padding:22px 24px;border-radius:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(42,38,34,0.05);text-align:center}
+.book-cta h2{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:8px}
+.book-cta p{color:#6A6560;font-size:14px;margin-bottom:14px}
+.big-btn{display:inline-flex;align-items:center;justify-content:center;padding:16px 32px;background:#E8955A;color:#fff;border:none;border-radius:999px;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer;font-family:inherit}
+.big-btn:hover{background:#B96B33}
+
+.tickets{background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 4px rgba(42,38,34,0.04)}
+.tickets h3{font-family:'Fraunces',serif;font-size:17px;margin-bottom:12px}
+.ticket{padding:14px 12px;border-radius:10px;background:#F3EEE4;margin-bottom:8px}
+.ticket .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.ticket .t{font-weight:600;font-size:15px;color:#2A2622}
+.ticket .st{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;text-transform:uppercase}
+.ticket .st.pending{background:#E8955A;color:#fff}
+.ticket .st.accepted{background:#6B9F72;color:#fff}
+.ticket .st.completed{background:#3B6E8F;color:#fff}
+.ticket .st.declined{background:#B85450;color:#fff}
+.ticket .m{color:#6A6560;font-size:13px}
+.ticket .d{color:#2A2622;font-size:13px;margin-top:6px;line-height:1.4}
+.empty{text-align:center;color:#6A6560;font-size:14px;padding:24px}
+
+/* Booking calendar */
+.book-view h3{font-family:'Fraunces',serif;font-size:18px;margin-bottom:6px}
+.book-view .sub{color:#6A6560;font-size:14px;margin-bottom:16px}
+.cal-legend{display:flex;gap:14px;font-size:12px;color:#6A6560;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.cal-legend span{display:inline-flex;align-items:center;gap:4px}
+.cal-legend .sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.cal-legend .sw.a{background:#6B9F72}
+.cal-legend .sw.b{background:#E4DED2}
+.cal-legend .sw.h{background:#E8955A}
+.cal-legend .sw.c{background:#F3EEE4;border:1px dashed #B7B0A2}
+
+.days{display:flex;flex-direction:column;gap:8px}
+.day{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(42,38,34,0.04)}
+.day .head{font-weight:600;font-size:14px;margin-bottom:8px}
+.slots{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.slot{padding:10px 6px;border-radius:8px;text-align:center;font-size:12px;cursor:pointer;font-weight:600;border:none;font-family:inherit}
+.slot.a{background:#6B9F72;color:#fff}
+.slot.a:hover{background:#5a8a63}
+.slot.b{background:#E4DED2;color:#6A6560;cursor:not-allowed}
+.slot.h{background:#E8955A;color:#fff}
+.slot.h:hover{background:#B96B33}
+.slot.c{background:#F3EEE4;color:#B7B0A2;cursor:not-allowed;border:1px dashed #B7B0A2}
+.slot .lbl{display:block;font-size:11px;opacity:0.85;font-weight:500;margin-top:2px}
+
+.modal{position:fixed;inset:0;background:rgba(42,38,34,0.6);display:none;align-items:flex-end;justify-content:center;z-index:100;padding:16px;padding-bottom:0}
+.modal.on{display:flex;animation:fade 200ms}
+.sheet{background:#fff;border-radius:16px 16px 0 0;padding:24px 20px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto}
+.sheet h2{font-family:'Fraunces',serif;font-size:22px;margin-bottom:6px}
+.sheet .sub{color:#6A6560;font-size:14px;margin-bottom:16px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:#6A6560;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;font-weight:600}
+.field input,.field textarea{width:100%;padding:14px 16px;border:1.5px solid #E4DED2;border-radius:10px;font-size:15px;font-family:inherit;background:#FAF6EF}
+.field input:focus,.field textarea:focus{outline:none;border-color:#3B6E8F;background:#fff}
+.field textarea{min-height:80px;resize:vertical}
+.hourly-warn{background:#FFF3E6;border:1px solid #E8955A;border-radius:10px;padding:12px 14px;font-size:13px;color:#7A4E2A;margin-bottom:14px}
+.hourly-warn strong{display:block;margin-bottom:4px}
+.btn-row{display:flex;gap:8px}
+.btn-row .btn{flex:1;padding:14px;border:none;border-radius:999px;font-weight:700;cursor:pointer;font-family:inherit;font-size:15px}
+.btn-row .btn.ghost{background:transparent;color:#6A6560;border:1.5px solid #E4DED2}
+.btn-row .btn.primary{background:#E8955A;color:#fff}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2A2622;color:#fff;padding:10px 22px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity 200ms;z-index:150}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <span class="brand">Danny McKay Handyman</span>
+  <a href="/portal/logout" class="out">Sign out</a>
+</header>
+
+<div class="wrap">
+
+  <div class="hello">
+    <div class="k">Signed in as</div>
+    <h1 id="hi">Loading…</h1>
+    <div class="who" id="who"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="show('tickets')" id="t_tickets">My Tickets</button>
+    <button class="tab" onclick="show('book')" id="t_book">Book Danny</button>
+  </div>
+
+  <section class="view on" data-view="tickets">
+    <div class="book-cta">
+      <h2>Need something fixed?</h2>
+      <p>Tap "Book Danny" to see his open slots and reserve a time.</p>
+      <button class="big-btn" onclick="show('book')">Book Danny →</button>
+    </div>
+    <div class="tickets">
+      <h3>My tickets</h3>
+      <div id="ticketsList"></div>
+    </div>
+  </section>
+
+  <section class="view book-view" data-view="book">
+    <h3>Book a time with Danny</h3>
+    <p class="sub">Green slots are open. Grey slots are already booked. Orange is after-hours (charged at 1.75× Danny's standard rate).</p>
+    <div class="cal-legend">
+      <span><span class="sw a"></span>Available</span>
+      <span><span class="sw b"></span>Booked</span>
+      <span><span class="sw h"></span>After-hours (1.75× rate)</span>
+      <span><span class="sw c"></span>Closed</span>
+    </div>
+    <div id="days" class="days"><div class="empty">Loading availability…</div></div>
+  </section>
+
+</div>
+
+<!-- Book modal -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<div class="toast" id="toast">saved</div>
+
+<script>
+let me=null,tickets=[],selectedSlot=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1500);};
+async function api(p,o={}){const r=await fetch('/handy/api/portal'+p,{credentials:'include',headers:{'Content-Type':'application/json'},...o});if(r.status===401){location.href='/portal/login';return}return r.json();}
+
+async function boot(){
+  const m=await api('/me');if(!m)return;me=m.user;
+  $('hi').textContent=me.name;
+  $('who').textContent=[me.email,me.phone,me.community].filter(Boolean).join(' · ');
+  loadTickets();
+}
+
+function show(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  $('t_'+name).classList.add('on');
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.dataset.view===name));
+  if(name==='book')loadBooking();
+  if(name==='tickets')loadTickets();
+}
+
+async function loadTickets(){
+  const d=await api('/tickets');if(!d)return;tickets=d.tickets||[];
+  const el=$('ticketsList');
+  if(tickets.length===0){el.innerHTML='<div class="empty">No tickets yet. Tap "Book Danny" to open your first one.</div>';return}
+  el.innerHTML=tickets.map(t=>`<div class="ticket">
+    <div class="row"><span class="t">${esc(t.title)}</span><span class="st ${t.status}">${t.status}</span></div>
+    <div class="m">${t.requested_date} · ${t.requested_window}${t.is_after_hours?` · $${t.hourly_rate}/hr`:''}</div>
+    ${t.description?`<div class="d">${esc(t.description)}</div>`:''}
+  </div>`).join('');
+}
+
+async function loadBooking(){
+  const d=await api('/availability?days=14');if(!d)return;
+  $('days').innerHTML=d.grid.map(day=>{
+    const slotBtn=(kind,label,timeLabel)=>{
+      let cls,disabled='',handler='';
+      if(day[kind]==='available'){cls='a';handler=`onclick="pickSlot('${day.date}','${kind}','${day.label}',false)"`;}
+      else if(day[kind]==='available_hourly'){cls='h';handler=`onclick="pickSlot('${day.date}','${kind}','${day.label}',true)"`;}
+      else if(day[kind]==='booked'){cls='b';disabled='disabled';}
+      else{cls='c';disabled='disabled';}
+      return `<button class="slot ${cls}" ${disabled} ${handler}>${label}<span class="lbl">${timeLabel}</span></button>`;
+    };
+    return `<div class="day">
+      <div class="head">${day.label}</div>
+      <div class="slots">
+        ${slotBtn('morning','Morning','8am–12pm')}
+        ${slotBtn('afternoon','Afternoon','12pm–5pm')}
+        ${slotBtn('afterhours','After hours','5pm–9pm')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.pickSlot=function(date,window,dayLabel,isHourly){
+  selectedSlot={date,window,dayLabel,isHourly};
+  const rate=125;
+  $('sheet').innerHTML=`
+    <h2>Book ${dayLabel}</h2>
+    <div class="sub">${window==='morning'?'8am–12pm':window==='afternoon'?'12pm–5pm':'5pm–9pm (after hours · 1.75× rate)'}</div>
+    ${isHourly?`<div class="hourly-warn"><strong>Hourly rate: 1.75× standard day rate</strong>After-hours jobs (5pm-9pm) are billed at 1.75× Danny\'s standard rate for that job. Danny will send a quote with the exact number before starting.</div>`:''}
+    <div class="field"><label>What needs to be done? *</label><input id="b_title" placeholder="e.g. Ceiling fan install, leaky faucet" required></div>
+    <div class="field"><label>Details (optional)</label><textarea id="b_desc" placeholder="Anything Danny should know? Parts you already have? Access notes?"></textarea></div>
+    <div class="btn-row">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" onclick="submitBooking()">Request booking</button>
+    </div>
+  `;
+  $('modal').classList.add('on');
+};
+
+async function submitBooking(){
+  const title=$('b_title').value.trim(),desc=$('b_desc').value.trim();
+  if(!title){toast('Tell Danny what needs doing');return}
+  const r=await api('/tickets',{method:'POST',body:JSON.stringify({title,description:desc,requested_date:selectedSlot.date,requested_window:selectedSlot.window})});
+  if(r&&r.ok){toast('Ticket sent to Danny');closeModal();show('tickets');}
+  else toast('Error: '+(r?.error||'failed'));
+}
+
+function closeModal(){$('modal').classList.remove('on');}
+
+boot();
+</script>
+</body>
+</html>
